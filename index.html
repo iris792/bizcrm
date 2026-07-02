@@ -3164,12 +3164,17 @@ function saveCustomer(id, overwriteDupId) {
 
   if (dup && overwriteDupId === dup.id) {
     // 使用者選擇「移除舊的，儲存新的」
+    sbDelete('customers', dup.id).catch(()=>{});
     DB.customers = DB.customers.filter(c => c.id !== dup.id);
   }
 
   DB.customers.push(obj);
-  custDetailId = obj.id;
-  toast('✅ 新增客戶成功');
+  showLoadingOverlay('儲存中…');
+  sbSaveCust(obj, false).then(() => {
+    hideLoadingOverlay();
+    toast('✅ 新增客戶成功');
+    refreshCustList();
+  }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); });
   return true;
 }
 
@@ -3234,13 +3239,17 @@ function dupReplaceOld(dupId) {
   document.getElementById('dup-taxid-overlay')?.remove();
   const obj = window._pendingNewCust;
   if (!obj) return;
+  sbDelete('customers', dupId).catch(()=>{});
   DB.customers = DB.customers.filter(c => c.id !== dupId);
   DB.customers.push(obj);
-  custDetailId = obj.id;
   window._pendingNewCust = null;
   closeModal('custModal');
-  renderPage(currentPage);
-  toast('✅ 已移除舊資料，新增客戶成功');
+  showLoadingOverlay('儲存中…');
+  sbSaveCust(obj, false).then(() => {
+    hideLoadingOverlay();
+    toast('✅ 已移除舊資料，新增客戶成功');
+    renderPage(currentPage);
+  }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); renderPage(currentPage); });
 }
 
 
