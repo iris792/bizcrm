@@ -1339,6 +1339,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         登出
       </button>
+      <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--sidebar-text3);letter-spacing:0.05em;">v 20260702_1648</div>
     </div>
   </div>
 </nav>
@@ -2300,7 +2301,8 @@ function renderCustList() {
       <div class="search-box" style="max-width:none;flex:1">
         <span>🔍</span>
         <input placeholder="搜尋任何關鍵字（公司、電話、統編、地址、聯繫人、備註…）"
-          oninput="_CF.keyword=this.value;refreshCustList()"
+          id="cust-kw-input" oninput="if(!_imeActive){_CF.keyword=this.value;refreshCustList()}"
+          oncompositionend="_CF.keyword=this.value;refreshCustList()"
           value="${_CF.keyword}" style="min-width:0">
       </div>
       <button class="adv-toggle-btn ${adv?'active':''}" onclick="_CF.showAdvanced=!_CF.showAdvanced;refreshCustList()">
@@ -2492,13 +2494,11 @@ function renderCustList() {
 
 function refreshCustList() {
   custPage = 0;
-  const el = document.getElementById('cust-content');
-  if (el) el.innerHTML = renderCustList();
+  _refreshWithFocus('cust-content', renderCustList, 'cust-kw-input');
 }
 
 function refreshCustListNoReset() {
-  const el = document.getElementById('cust-content');
-  if (el) el.innerHTML = renderCustList();
+  _refreshWithFocus('cust-content', renderCustList, 'cust-kw-input');
 }
 
 function clearCustFilters() {
@@ -2603,6 +2603,7 @@ function showCustomerViewModal(c) {
         <h2 style="font-size:15px">${c.company}</h2>
         <div style="display:flex;gap:8px;align-items:center;">
           <button class="btn btn-ghost btn-sm" onclick="closeViewModal(${c.id});openEditCustomer(${c.id})">✏️ 編輯資料</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:var(--red)" onclick="deleteCustomer(${c.id})">🗑 刪除</button>
           <button class="modal-close" onclick="closeViewModal(${c.id})">✕</button>
         </div>
       </div>
@@ -3364,7 +3365,7 @@ function renderPartList() {
       <div class="search-box" style="max-width:none;flex:1">
         <span>🔍</span>
         <input placeholder="搜尋公司名稱、聯繫人、代理品牌…"
-          oninput="_PF.keyword=this.value;refreshPartList()" value="${_PF.keyword}">
+          id="part-kw-input" oninput="if(!_imeActive){_PF.keyword=this.value;refreshPartList()}" oncompositionend="_PF.keyword=this.value;refreshPartList()" value="${_PF.keyword}">
       </div>
       <button class="adv-toggle-btn ${adv?'active':''}" onclick="_PF._showAdv=!_PF._showAdv;refreshPartList()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
@@ -3427,7 +3428,11 @@ function renderPartList() {
               <strong>${p.company||p.companyEn||'-'}</strong>
               ${p.companyEn && p.company ? `<span style="font-size:11px;color:var(--text3);margin-left:4px;">${p.companyEn}</span>` : ''}
             </td>
-            <td>${p.contacts[0]?p.contacts[0].name:'尚無'}</td>
+            <td>
+              ${(p.contacts||[]).filter(ct=>ct.name&&ct.name!=='尚無').map(ct=>
+                `<div style="font-size:12px;">${ct.primary?'<span style="color:var(--accent);font-size:10px;margin-right:3px;">★</span>':''}${ct.name}${ct.dept?'<span style="color:var(--text3);font-size:11px;margin-left:4px;">'+ct.dept+'</span>':''}</div>`
+              ).join('') || '<span style="color:var(--text3);font-size:11px;">尚無</span>'}
+            </td>
             <td style="line-height:1.8">${brands.length ? brands.map(b=>`<span class="tag" style="font-size:11px">${b}</span>`).join(' ') : '<span style="color:var(--text3);font-size:12px">-</span>'}</td>
           </tr>`;
         }).join('')}
@@ -3437,8 +3442,7 @@ function renderPartList() {
 }
 
 function refreshPartList() {
-  const el = document.getElementById('part-content');
-  if (el) el.innerHTML = renderPartList();
+  _refreshWithFocus('part-content', renderPartList, 'part-kw-input');
 }
 
 function clearPartFilters() {
@@ -3497,7 +3501,9 @@ function showPartnerViewModal(p) {
     return valid.map((ct, i) => `
       <div class="contact-item" style="padding:10px 0;border-bottom:1px solid var(--border);">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-          <span style="font-size:10px;font-weight:700;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:1px 7px;border-radius:4px;">聯繫人 ${i+1}</span>
+          ${ct.primary
+            ? '<span style="font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-glow);border:1px solid var(--border2);padding:1px 7px;border-radius:4px;">★ 主要窗口</span>'
+            : `<span style="font-size:10px;font-weight:700;color:var(--text3);background:var(--surface2);border:1px solid var(--border);padding:1px 7px;border-radius:4px;">聯繫人 ${i+1}</span>`}
           <strong style="font-size:13px">${ct.name}</strong>
           ${ct.dept ? `<span style="font-size:11px;color:var(--text3)">${ct.dept}</span>` : ''}
         </div>
@@ -3520,6 +3526,7 @@ function showPartnerViewModal(p) {
         <h2 style="font-size:15px">${displayName}</h2>
         <div style="display:flex;gap:8px;align-items:center;">
           <button class="btn btn-ghost btn-sm" onclick="closePartModal(${p.id});openEditPartner(${p.id})">✏️ 編輯資料</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:var(--red)" onclick="deletePartner(${p.id})">🗑 刪除</button>
           <button class="modal-close" onclick="closePartModal(${p.id})">✕</button>
         </div>
       </div>
@@ -3994,7 +4001,13 @@ function buildPfContactRow(ct, i) {
   return `
   <div class="contact-row" id="pf-ct-row-${i}" style="border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;background:var(--surface2);">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <span style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;">聯繫人 ${i+1}</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;">聯繫人 ${i+1}</span>
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;color:var(--accent);font-weight:600;">
+          <input type="radio" name="pf-primary-ct" class="pf-ct-primary" value="${i}" ${ct.primary||i===0?'checked':''} style="accent-color:var(--accent)">
+          主要窗口
+        </label>
+      </div>
       ${i > 0 ? `<button type="button" class="contact-row-del" onclick="removePfContactRow(${i})" title="刪除">✕</button>` : ''}
     </div>
     <div class="form-grid">
@@ -4045,19 +4058,23 @@ function removePfContactRow(i) {
 
 function getPfContacts() {
   const wrap = document.getElementById('pf-contacts-wrap');
-  if (!wrap) return [{name:'尚無',dept:'',phone:'',mail:'',job:''}];
+  if (!wrap) return [{name:'尚無',dept:'',phone:'',mail:'',job:'',primary:true}];
+  const primaryVal = wrap.querySelector('.pf-ct-primary:checked')?.value;
   const rows = wrap.querySelectorAll('.contact-row');
   const result = [];
-  rows.forEach(row => {
+  rows.forEach((row, idx) => {
     result.push({
-      name:  row.querySelector('.pf-ct-name')?.value.trim()  || '尚無',
-      dept:  row.querySelector('.pf-ct-dept')?.value.trim()  || '',
-      phone: row.querySelector('.pf-ct-phone')?.value.trim() || '',
-      mail:  row.querySelector('.pf-ct-mail')?.value.trim()  || '',
-      job:   row.querySelector('.pf-ct-job')?.value.trim()   || '',
+      name:    row.querySelector('.pf-ct-name')?.value.trim()  || '尚無',
+      dept:    row.querySelector('.pf-ct-dept')?.value.trim()  || '',
+      phone:   row.querySelector('.pf-ct-phone')?.value.trim() || '',
+      mail:    row.querySelector('.pf-ct-mail')?.value.trim()  || '',
+      job:     row.querySelector('.pf-ct-job')?.value.trim()   || '',
+      primary: String(idx) === String(primaryVal),
     });
   });
-  return result.length ? result : [{name:'尚無',dept:'',phone:'',mail:'',job:''}];
+  // Ensure at least one primary
+  if (result.length && !result.some(c=>c.primary)) result[0].primary = true;
+  return result.length ? result : [{name:'尚無',dept:'',phone:'',mail:'',job:'',primary:true}];
 }
 
 function savePartner(id) {
@@ -4207,7 +4224,7 @@ function renderVendorList() {
       <div class="search-box" style="max-width:none;flex:1">
         <span>🔍</span>
         <input placeholder="搜尋中文名稱、英文名稱、細項、產品名稱…"
-          oninput="_VF.keyword=this.value;refreshVendorList()" value="${_VF.keyword}">
+          id="vendor-kw-input" oninput="if(!_imeActive){_VF.keyword=this.value;refreshVendorList()}" oncompositionend="_VF.keyword=this.value;refreshVendorList()" value="${_VF.keyword}">
       </div>
       <button class="adv-toggle-btn ${adv?'active':''}" onclick="_VF._showAdv=!_VF._showAdv;refreshVendorList()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
@@ -4301,8 +4318,7 @@ function renderVendorList() {
 }
 
 function refreshVendorList() {
-  const el = document.getElementById('vendor-content');
-  if (el) el.innerHTML = renderVendorList();
+  _refreshWithFocus('vendor-content', renderVendorList, 'vendor-kw-input');
 }
 
 function clearVendorFilters() {
@@ -4558,6 +4574,7 @@ function renderVendorDetail() {
   <div style="margin-bottom:16px;display:flex;align-items:center;gap:12px;">
     <button class="btn btn-ghost btn-sm" onclick="vendorDetailId=null;renderProducts()">← 返回列表</button>
     <span style="color:var(--text3);font-size:13px;">${displayName}</span>
+    <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:var(--red);margin-left:auto" onclick="deleteVendor(${v.id})">🗑 刪除原廠</button>
   </div>
   <div class="detail-wrap">
     <div>
@@ -5167,6 +5184,71 @@ function deleteProduct(vendorId, idx) {
   renderProducts();
 }
 
+function confirmDelete(msg, onConfirm) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(20,40,10,0.55);z-index:99998;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:14px;padding:28px 32px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,0.25);">
+      <div style="font-size:24px;margin-bottom:10px;">⚠️</div>
+      <div style="font-size:15px;font-weight:700;color:#1a3a0f;margin-bottom:8px;">確定要刪除？</div>
+      <div style="font-size:13px;color:#666;margin-bottom:22px;line-height:1.6">${msg}<br><span style="color:var(--red);font-size:12px;">此操作無法復原</span></div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:10px;border:1.5px solid #ddd;border-radius:8px;background:#f5f5f5;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">取消</button>
+        <button id="confirm-del-btn" style="flex:1;padding:10px;border:none;border-radius:8px;background:#c0392b;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">確認刪除</button>
+      </div>
+    </div>`;
+  overlay.querySelector('#confirm-del-btn').addEventListener('click', () => {
+    overlay.remove();
+    onConfirm();
+  });
+  document.body.appendChild(overlay);
+}
+
+function deleteCustomer(id) {
+  const c = DB.customers.find(x=>x.id===id);
+  if (!c) return;
+  confirmDelete(`刪除客戶「${c.company}」`, () => {
+    closeViewModal(id);
+    DB.customers = DB.customers.filter(x=>x.id!==id);
+    showLoadingOverlay('刪除中…');
+    sbDelete('customers', id).then(() => {
+      hideLoadingOverlay();
+      toast('✅ 客戶已刪除');
+      refreshCustList();
+    }).catch(e => { hideLoadingOverlay(); toast('❌ 刪除失敗：' + e.message); });
+  });
+}
+
+function deletePartner(id) {
+  const p = DB.partners.find(x=>x.id===id);
+  if (!p) return;
+  confirmDelete(`刪除合作窗口「${p.company||p.companyEn}」`, () => {
+    closePartModal(id);
+    DB.partners = DB.partners.filter(x=>x.id!==id);
+    showLoadingOverlay('刪除中…');
+    sbDelete('partners', id).then(() => {
+      hideLoadingOverlay();
+      toast('✅ 窗口已刪除');
+      refreshPartList();
+    }).catch(e => { hideLoadingOverlay(); toast('❌ 刪除失敗：' + e.message); });
+  });
+}
+
+function deleteVendor(id) {
+  const v = DB_VENDORS.list.find(x=>x.id===id);
+  if (!v) return;
+  const name = [v.nameZh, v.nameEn].filter(Boolean).join(' / ');
+  confirmDelete(`刪除原廠「${name}」及其所有產品項目`, () => {
+    DB_VENDORS.list = DB_VENDORS.list.filter(x=>x.id!==id);
+    vendorDetailId = null;
+    showLoadingOverlay('刪除中…');
+    sbDelete('vendors', id).then(() => {
+      hideLoadingOverlay();
+      toast('✅ 原廠已刪除');
+      renderProducts();
+    }).catch(e => { hideLoadingOverlay(); toast('❌ 刪除失敗：' + e.message); });
+  });
+}
 function toggleAudChip(lbl) {
   const cb = lbl.querySelector('input[type=checkbox]');
   if (!cb) return;
@@ -5257,6 +5339,39 @@ function doSave(id) {
 function closeModal(id) {
   const overlay = document.getElementById('overlay-'+id);
   if (overlay) overlay.classList.remove('open');
+}
+
+let _imeActive = false;
+document.addEventListener('compositionstart', () => { _imeActive = true; });
+document.addEventListener('compositionend', e => {
+  _imeActive = false;
+  // After IME confirms, manually trigger search on known inputs
+  const id = e.target?.id;
+  if (id === 'cust-kw-input')   { _CF.keyword = e.target.value; refreshCustList(); }
+  else if (id === 'part-kw-input')   { _PF.keyword = e.target.value; refreshPartList(); }
+  else if (id === 'vendor-kw-input') { _VF.keyword = e.target.value; refreshVendorList(); }
+});
+
+// ── Refresh with focus preservation ──
+function _refreshWithFocus(containerId, renderFn, inputId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  // Save cursor position if the search input is focused
+  const active = document.activeElement;
+  const isFocused = active && active.id === inputId;
+  const selStart = isFocused ? active.selectionStart : null;
+  const selEnd   = isFocused ? active.selectionEnd   : null;
+
+  el.innerHTML = renderFn();
+
+  // Restore focus and cursor
+  if (isFocused) {
+    const newInput = document.getElementById(inputId);
+    if (newInput) {
+      newInput.focus();
+      try { newInput.setSelectionRange(selStart, selEnd); } catch(e) {}
+    }
+  }
 }
 
 // ══════════════════════════════════════════════
