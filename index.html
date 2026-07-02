@@ -2,10 +2,14 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1B3512">
 <title>業務管理系統</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #F7F9F3;
@@ -45,7 +49,7 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 
 body {
-  font-family: 'Noto Sans TC', 'Inter', sans-serif;
+  font-family: 'Nunito', 'Noto Sans TC', 'Inter', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -484,14 +488,127 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .empty-icon { font-size: 36px; margin-bottom: 12px; }
 .empty p { font-size: 14px; }
 
+/* ══════════════════════════════════════════════
+   RESPONSIVE DESIGN
+══════════════════════════════════════════════ */
+
+/* ── Tablet (≤900px) ── */
 @media (max-width: 900px) {
-  #sidebar { width: 60px; min-width: 60px; }
+  #sidebar {
+    width: 60px; min-width: 60px;
+    padding-bottom: 80px;
+  }
   #main { margin-left: 60px; }
   .sidebar-logo h1, .sidebar-logo .logo-mark, .nav-label, .nav-text { display: none; }
-  .nav-item { justify-content: center; padding: 12px 0; }
+  .nav-item { justify-content: center; padding: 14px 0; }
   .level-grid { grid-template-columns: repeat(3, 1fr); }
   .dash-two-col { grid-template-columns: 1fr; }
   .detail-wrap { grid-template-columns: 1fr; }
+  .topbar { flex-wrap: wrap; gap: 8px; }
+  .topbar > div:last-child { flex-shrink: 0; }
+}
+
+/* ── Mobile (≤600px) ── */
+@media (max-width: 600px) {
+  /* Sidebar: bottom nav bar on mobile */
+  #sidebar {
+    width: 100% !important; min-width: unset !important;
+    height: 56px; top: auto; bottom: 0; left: 0; right: 0;
+    flex-direction: row;
+    border-right: none; border-top: 1px solid var(--sidebar-border);
+    padding-bottom: 0 !important;
+    overflow: visible;
+    z-index: 200;
+  }
+  .sidebar-logo { display: none; }
+  .nav-section { display: none; }
+  .nav-list {
+    display: flex; flex-direction: row;
+    align-items: center; justify-content: space-around;
+    width: 100%; padding: 0; margin: 0;
+    flex: 1;
+  }
+  .nav-item {
+    flex: 1; justify-content: center; padding: 8px 0;
+    border-radius: 0; flex-direction: column; gap: 2px;
+    font-size: 10px;
+  }
+  .nav-text { display: block !important; font-size: 9px; color: var(--sidebar-text2); }
+  .nav-icon { width: 20px; height: 20px; }
+  /* Hide logout in bottom nav */
+  #sidebar > div[style*="absolute"] { display: none; }
+
+  /* Main content */
+  #main { margin-left: 0; margin-bottom: 56px; }
+  .content { padding: 12px; }
+
+  /* Topbar */
+  .topbar { padding: 12px 14px 8px; flex-wrap: wrap; gap: 8px; }
+  .topbar-title { font-size: 18px; }
+  .topbar > div:last-child { display: flex; gap: 6px; flex-wrap: wrap; }
+  .topbar > div:last-child .btn { font-size: 12px; padding: 7px 12px; }
+
+  /* Level grid */
+  .level-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .level-card { padding: 14px; }
+
+  /* Search panel */
+  .cust-search-panel { padding: 10px 12px; }
+  .cust-search-row { flex-wrap: wrap; gap: 6px; }
+  .adv-filter-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Table: hide less important columns on mobile */
+  table th:nth-child(n+4), table td:nth-child(n+4) { display: none; }
+  table th:nth-child(3), table td:nth-child(3) { display: none; }
+
+  /* Modals: full screen */
+  .modal-overlay { padding: 0 !important; align-items: flex-end; }
+  .modal {
+    max-width: 100% !important; width: 100% !important;
+    max-height: 92vh; border-radius: 18px 18px 0 0 !important;
+    overflow-y: auto;
+  }
+  .modal-head { padding: 14px 16px; }
+  .modal-body { padding: 14px 16px; }
+
+  /* Customer / Partner view modal */
+  .vd-wrap { grid-template-columns: 1fr !important; }
+  .vd-left { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
+  .vd-right { padding: 16px; max-height: none; }
+
+  /* Forms */
+  .form-grid { grid-template-columns: 1fr !important; }
+  .form-full { grid-column: 1 !important; }
+
+  /* vf-prod-row: stack vertically */
+  .vf-prod-row { flex-wrap: wrap !important; }
+  .vf-prod-row select, .vf-prod-row input { flex: 1 1 100% !important; min-width: 0; }
+
+  /* Buttons */
+  .btn { min-height: 40px; }
+
+  /* Pagination */
+  .pagination-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .page-btns { flex-wrap: wrap; }
+
+  /* Dealer tree */
+  .dealer-sub { flex-direction: column; gap: 4px; }
+}
+
+/* ── Touch-friendly ── */
+@media (hover: none) and (pointer: coarse) {
+  .btn { min-height: 42px; }
+  .nav-item { min-height: 48px; }
+  .tr-clickable td { padding: 14px 10px; }
+  .form-control { font-size: 16px !important; min-height: 42px; } /* prevent iOS zoom on focus */
+  select.form-control { font-size: 16px !important; }
+  textarea.form-control { font-size: 16px !important; }
+  .modal-close { width: 36px; height: 36px; font-size: 18px; }
+  .log-edit-btn { width: 34px; height: 34px; font-size: 15px; }
+}
+@media (max-width: 400px) {
+  .level-grid { grid-template-columns: repeat(2, 1fr); }
+  .adv-filter-grid { grid-template-columns: 1fr !important; }
 }
 
 #toast {
@@ -1100,6 +1217,8 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 @media (max-width: 700px) {
   .vd-wrap { grid-template-columns: 1fr; }
   .vd-left { border-right: none; border-bottom: 1px solid var(--border); }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-full { grid-column: 1; }
 }
 
 /* ─── LISTED BADGE ─── */
@@ -2108,13 +2227,17 @@ function showLevelList(level, e) {
   if (!custs.length) { toast('目前無此等級客戶'); return; }
   openModal('levelModal', `${level}-${LEVEL_NAMES[level]} 客戶列表（${custs.length}家）`, `
     <table width="100%">
-      <thead><tr><th>公司名稱</th><th>負責業務</th><th>產業</th></tr></thead>
-      <tbody>${custs.map(c => `
+      <thead><tr><th>公司名稱</th><th>主要聯繫人</th><th>產業</th></tr></thead>
+      <tbody>${custs.map(c => {
+        const primary = c.contacts?.find(ct=>ct.primary) || c.contacts?.[0];
+        const contactName = primary?.name && primary.name !== '尚無' ? primary.name : '-';
+        return `
         <tr class="tr-clickable" onclick="closeModal('levelModal');openCustomerDetail(${c.id})">
           <td><strong>${c.company}</strong></td>
-          <td>${c.owner||'-'}</td>
+          <td>${contactName}</td>
           <td>${industryBadge(c.industry)}</td>
-        </tr>`).join('')}
+        </tr>`;
+      }).join('')}
       </tbody>
     </table>
   `);
@@ -2611,7 +2734,8 @@ function showCustomerViewModal(c) {
         ${modalHtml}
       </div>
     </div>`;
-  overlay.addEventListener('click', e => { if(e.target===overlay) closeViewModal(c.id); });
+  overlay.addEventListener('mousedown', e => { overlay._downOnBg = e.target === overlay; });
+  overlay.addEventListener('click', e => { if(e.target===overlay && overlay._downOnBg) closeViewModal(c.id); });
   document.body.appendChild(overlay);
 }
 
@@ -2645,13 +2769,34 @@ function renderLogsPanel(c) {
               ${methodBadge(l.method)}
               ${l.track&&l.track!=='不追蹤' ? `<span style="font-size:11px;color:var(--orange)">📌 ${l.track==='指定追蹤日'&&l.trackDate?fmtDate(l.trackDate):'追蹤中'}</span>` : ''}
             </div>
-            <button class="log-edit-btn" onclick="openLogForm(${c.id},${l.id})" title="編輯此紀錄">✏️</button>
+            <div style="display:flex;gap:4px;">
+              <button class="log-edit-btn" onclick="openLogForm(${c.id},${l.id})" title="編輯">✏️</button>
+              <button class="log-edit-btn" style="color:var(--red)" onclick="deleteLog('cust',${c.id},${l.id})" title="刪除">🗑</button>
+            </div>
           </div>
           <div class="log-content">${l.content}</div>
         </div>`).join('')}`;
 }
 
-// Unified log form: new (logId=null) or edit (logId=number)
+function deleteLog(type, entityId, logId) {
+  confirmDelete('確定刪除此筆聯繫紀錄？', () => {
+    if (type === 'cust') {
+      const c = DB.customers.find(x=>x.id===entityId);
+      if (!c) return;
+      c.logs = c.logs.filter(l=>l.id!==logId);
+      sbUpdateCustLogs(entityId, c.logs).catch(e=>toast('⚠ 同步失敗：'+e.message));
+      refreshViewModal(entityId);
+    } else {
+      const p = DB.partners.find(x=>x.id===entityId);
+      if (!p) return;
+      p.logs = p.logs.filter(l=>l.id!==logId);
+      sbUpdatePartLogs(entityId, p.logs).catch(e=>toast('⚠ 同步失敗：'+e.message));
+      refreshPartModal(entityId);
+    }
+    toast('✅ 聯繫紀錄已刪除');
+  });
+}
+
 function openLogForm(custId, logId) {
   const c = DB.customers.find(x => x.id === custId);
   if (!c) return;
@@ -3563,7 +3708,8 @@ function showPartnerViewModal(p) {
         </div>
       </div>
     </div>`;
-  overlay.addEventListener('click', e => { if (e.target === overlay) closePartModal(p.id); });
+  overlay.addEventListener('mousedown', e => { overlay._downOnBg = e.target === overlay; });
+  overlay.addEventListener('click', e => { if (e.target === overlay && overlay._downOnBg) closePartModal(p.id); });
   document.body.appendChild(overlay);
 }
 
@@ -3596,7 +3742,10 @@ function renderPartLogsPanel(p) {
               <span class="log-date">${fmtDate(l.date)}</span>
               ${methodBadge(l.method)}
             </div>
-            <button class="log-edit-btn" onclick="openPartLogForm(${p.id},${l.id})">✏️</button>
+            <div style="display:flex;gap:4px;">
+              <button class="log-edit-btn" onclick="openPartLogForm(${p.id},${l.id})">✏️</button>
+              <button class="log-edit-btn" style="color:var(--red)" onclick="deleteLog('part',${p.id},${l.id})" title="刪除">🗑</button>
+            </div>
           </div>
           <div class="log-content">${l.content}</div>
         </div>`).join('')}`;
@@ -5311,7 +5460,13 @@ function openModal(id, title, bodyHtml, onSave) {
         <div class="modal-foot" id="modal-foot-${id}"></div>
       </div>`;
     document.body.appendChild(overlay);
-    overlay.addEventListener('click', e => { if(e.target===overlay) closeModal(id); });
+    // Only close when both mousedown AND click target is the overlay background
+    overlay.addEventListener('mousedown', e => {
+      overlay._downOnBg = e.target === overlay;
+    });
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay && overlay._downOnBg) closeModal(id);
+    });
   }
   document.getElementById('modal-title-'+id).textContent = title;
   document.getElementById('modal-body-'+id).innerHTML = bodyHtml;
