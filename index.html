@@ -6,44 +6,46 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#1B3512">
+<meta name="theme-color" content="#4CAF50">
 <title>業務管理系統</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #F7F9F3;
-  --surface: #FFFFFF;
-  --surface2: #F0F5E8;
-  --border: #D6E8C0;
-  --border2: #B8D494;
-  --accent: #3A7D2C;
-  --accent2: #2D6121;
-  --accent-glow: rgba(58,125,44,0.10);
-  --accent-sun: #E8A020;
-  --accent-sun2: #C8860E;
-  --sun-glow: rgba(232,160,32,0.18);
-  --text: #1E2D14;
-  --text2: #4A6535;
-  --text3: #7A9560;
-  --green: #3A7D2C;
-  --yellow: #E8A020;
-  --red: #C0392B;
-  --orange: #D4691A;
-  --purple: #6B4FA0;
-  --teal: #1A7A6B;
-  --l1: #7A9068;
-  --l2: #2B7EC4;
-  --l3: #C4811A;
-  --l4: #3A7D2C;
-  --l5: #7A4FB8;
-  --sidebar-bg: #1B3512;
-  --sidebar-text: #C8E6A8;
-  --sidebar-text2: #8AB870;
-  --sidebar-text3: #4A6A35;
-  --sidebar-border: #2A4C1C;
-  --sidebar-active-bg: rgba(200,230,168,0.14);
-  --sidebar-active-text: #D8F0A8;
+  /* 蠟筆小新塗鴉風格 */
+  --bg: #FFF9F0;
+  --surface: #FFFDF8;
+  --surface2: #FFF3E0;
+  --border: #F0C060;
+  --border2: #E8A030;
+  --accent: #FF6B35;
+  --accent2: #E85520;
+  --accent-glow: rgba(255,107,53,0.12);
+  --accent-sun: #FFCA28;
+  --accent-sun2: #FFB300;
+  --sun-glow: rgba(255,202,40,0.25);
+  --text: #2C1A0E;
+  --text2: #5C3A1E;
+  --text3: #A0784A;
+  --green: #4CAF50;
+  --yellow: #FFCA28;
+  --red: #E53935;
+  --orange: #FF6B35;
+  --purple: #7B1FA2;
+  --teal: #00897B;
+  --l0: #9E9E9E;
+  --l1: #66BB6A;
+  --l2: #42A5F5;
+  --l3: #FFA726;
+  --l4: #AB47BC;
+  --l5: #EF5350;
+  --sidebar-bg: #EDF7EC;
+  --sidebar-text: #1B5E20;
+  --sidebar-text2: #2E7D32;
+  --sidebar-text3: #81C784;
+  --sidebar-border: #C8E6C9;
+  --sidebar-active-bg: rgba(76,175,80,0.15);
+  --sidebar-active-text: #1B5E20;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -74,28 +76,28 @@ body {
 
 .sidebar-logo {
   padding: 22px 20px 18px;
-  border-bottom: 1px solid var(--sidebar-border);
+  border-bottom: 2px dashed #C8E6C9;
 }
 .sidebar-logo .logo-mark {
   font-size: 11px;
   letter-spacing: 0.1em;
-  color: var(--accent-sun);
-  font-weight: 700;
+  color: #4CAF50;
+  font-weight: 800;
   text-transform: uppercase;
   margin-bottom: 4px;
 }
 .sidebar-logo h1 {
   font-size: 16px;
-  font-weight: 700;
-  color: var(--sidebar-text);
+  font-weight: 800;
+  color: #1B5E20;
 }
 
 .nav-section { padding: 16px 0; }
 .nav-label {
   font-size: 10px;
   letter-spacing: 0.12em;
-  color: var(--sidebar-text3);
-  font-weight: 600;
+  color: #81C784;
+  font-weight: 700;
   text-transform: uppercase;
   padding: 0 16px 8px;
 }
@@ -105,17 +107,20 @@ body {
   gap: 10px;
   padding: 10px 16px;
   cursor: pointer;
-  transition: all 0.18s;
-  border-left: 3px solid transparent;
+  transition: all 0.15s;
+  border-left: 4px solid transparent;
   font-size: 13.5px;
-  color: #A8CC88;
+  font-weight: 700;
+  color: var(--sidebar-text2);
+  border-radius: 0 20px 20px 0;
+  margin-right: 12px;
 }
-.nav-item:hover { background: var(--sidebar-active-bg); color: #D8F0A8; }
+.nav-item:hover { background: var(--sidebar-active-bg); color: var(--accent-sun); }
 .nav-item.active {
   background: var(--sidebar-active-bg);
   border-left-color: var(--accent-sun);
-  color: #E8F8C8;
-  font-weight: 600;
+  color: var(--accent-sun);
+  font-weight: 800;
 }
 .nav-icon { flex-shrink: 0; width: 20px; display: flex; align-items: center; justify-content: center; }
 .nav-text { white-space: nowrap; overflow: hidden; }
@@ -131,7 +136,7 @@ body {
 
 .topbar {
   background: var(--surface);
-  border-bottom: 2px solid var(--border);
+  border-bottom: 3px solid var(--accent-sun);
   padding: 16px 28px;
   display: flex;
   align-items: center;
@@ -140,33 +145,37 @@ body {
   top: 0;
   z-index: 50;
 }
-.topbar-title { font-size: 18px; font-weight: 700; color: var(--text); }
-.topbar-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.topbar-title { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.01em; }
+.topbar-sub { font-size: 12px; color: var(--text3); margin-top: 2px; font-weight: 600; }
 
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 9px 18px;
+  border-radius: 50px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
-  border: none;
+  border: 2.5px solid #2C1A0E;
   transition: all 0.15s;
   font-family: inherit;
+  box-shadow: 3px 3px 0 #2C1A0E;
+  letter-spacing: 0.02em;
 }
+.btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #2C1A0E; }
 .btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-primary:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 4px 5px 0 #2C1A0E; }
 .btn-ghost {
-  background: transparent;
+  background: var(--surface);
   color: var(--text2);
-  border: 1.5px solid var(--border2);
+  border: 2px solid var(--border2);
+  box-shadow: 2px 2px 0 #D4A060;
 }
-.btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--accent); }
-.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-ghost:hover { background: var(--surface2); color: var(--accent); border-color: var(--accent); }
+.btn-sm { padding: 5px 12px; font-size: 12px; box-shadow: 2px 2px 0 #2C1A0E; }
 .btn-danger { background: var(--red); color: #fff; }
-.btn-danger:hover { background: #a93226; }
+.btn-danger:hover { background: #c62828; }
 
 .content { padding: 24px 28px; }
 
@@ -197,9 +206,10 @@ body {
 /* TABLE */
 .table-wrap {
   background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
+  border: 2.5px solid #2C1A0E;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 4px 4px 0 #E8C060;
 }
 .table-header {
   padding: 16px 20px;
@@ -515,7 +525,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
     width: 100% !important; min-width: unset !important;
     height: 56px; top: auto; bottom: 0; left: 0; right: 0;
     flex-direction: row;
-    border-right: none; border-top: 1px solid var(--sidebar-border);
+    border-right: none; border-top: 2px solid #C8E6C9;
     padding-bottom: 0 !important;
     overflow: visible;
     z-index: 200;
@@ -616,11 +626,13 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   bottom: 24px; right: 24px;
   background: var(--accent);
   color: #fff;
-  padding: 12px 20px;
-  border-radius: 10px;
+  padding: 12px 22px;
+  border-radius: 50px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   z-index: 9999;
+  border: 2.5px solid #2C1A0E;
+  box-shadow: 4px 4px 0 #2C1A0E;
   transform: translateY(60px);
   opacity: 0;
   transition: all 0.25s;
@@ -767,14 +779,14 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 }
 .level-card {
   background: var(--surface);
-  border: 1.5px solid var(--border);
+  border: 2.5px solid #2C1A0E;
   border-radius: 12px;
   padding: 14px 16px;
   cursor: pointer;
   transition: all 0.18s;
   position: relative;
 }
-.level-card:hover { transform: translateY(-2px); border-color: var(--lc,var(--accent)); box-shadow: 0 4px 14px rgba(0,0,0,0.07); }
+.level-card:hover { transform: translateY(-3px) rotate(-1deg); border-color: var(--lc,var(--accent)); box-shadow: 5px 6px 0 #2C1A0E; }
 .level-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .level-badge {
   font-size: 11px; font-weight: 800;
@@ -1369,12 +1381,14 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 <!-- ── LOGIN SCREEN ── -->
 <div id="login-screen" style="
   position:fixed;inset:0;z-index:99999;
-  background:linear-gradient(135deg,#1a3a0f 0%,#2d5e1a 50%,#1a3a0f 100%);
+  background:linear-gradient(160deg,#FF6B35 0%,#FFCA28 50%,#FF6B35 100%);
   display:flex;align-items:center;justify-content:center;
 ">
   <div style="
-    background:#fff;border-radius:20px;padding:44px 40px;
-    width:100%;max-width:380px;box-shadow:0 24px 60px rgba(0,0,0,0.3);
+    background:#FFFDF8;border-radius:24px;padding:44px 40px;
+    width:100%;max-width:380px;
+    border:3px solid #2C1A0E;
+    box-shadow:8px 8px 0 #2C1A0E;
     text-align:center;
   ">
     <div style="font-size:28px;margin-bottom:6px;">☀️</div>
@@ -1394,11 +1408,12 @@ textarea.form-control { resize: vertical; min-height: 80px; }
     <div id="login-err" style="color:#c0392b;font-size:12px;margin-bottom:12px;min-height:18px;"></div>
 
     <button onclick="doLogin()" style="
-      width:100%;padding:13px;background:linear-gradient(135deg,#3A7D2C,#2d6121);
-      color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;
-      cursor:pointer;font-family:inherit;transition:opacity 0.15s;
-    " onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-      進入系統
+      width:100%;padding:13px;background:#FF6B35;
+      color:#fff;border:2.5px solid #2C1A0E;border-radius:50px;font-size:15px;font-weight:800;
+      cursor:pointer;font-family:inherit;transition:all 0.15s;
+      box-shadow:4px 4px 0 #2C1A0E;letter-spacing:0.02em;
+    " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='5px 6px 0 #2C1A0E'" onmouseout="this.style.transform='';this.style.boxShadow='4px 4px 0 #2C1A0E'">
+      進入系統 🚀
     </button>
 
     <p style="font-size:11px;color:#bbb;margin:20px 0 0;">© BIZCRM 業務管理系統</p>
@@ -1439,26 +1454,26 @@ textarea.form-control { resize: vertical; min-height: 80px; }
     </div>
 
     <!-- 登出區塊 -->
-    <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 12px;border-top:1px solid var(--sidebar-border);">
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 12px;border-top:2px solid #C8E6C9;background:var(--sidebar-bg);">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
         <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">
           <span id="sidebar-user-initial">?</span>
         </div>
         <div style="min-width:0;">
-          <div id="sidebar-user-name" style="font-size:12px;font-weight:700;color:var(--sidebar-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">未登入</div>
-          <div style="font-size:10px;color:var(--sidebar-text3);">已登入帳號</div>
+          <div id="sidebar-user-name" style="font-size:12px;font-weight:700;color:#1B5E20;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">未登入</div>
+          <div style="font-size:10px;color:#81C784;">已登入帳號</div>
         </div>
       </div>
       <button onclick="doLogout()" style="
         width:100%;padding:7px;border-radius:8px;border:1px solid var(--sidebar-border);
-        background:transparent;color:var(--sidebar-text2);font-size:12px;font-weight:600;
+        background:transparent;color:#2E7D32;font-size:12px;font-weight:700;
         font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
-        transition:all 0.15s;
-      " onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">
+        transition:all 0.15s;border-color:#C8E6C9;
+      " onmouseover="this.style.background='rgba(76,175,80,0.12)'" onmouseout="this.style.background='transparent'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         登出
       </button>
-      <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--sidebar-text3);letter-spacing:0.05em;">v 20260702_1648</div>
+      <div style="text-align:center;margin-top:8px;font-size:10px;color:#A5D6A7;letter-spacing:0.05em;">v 20260702_1648</div>
     </div>
   </div>
 </nav>
@@ -3563,12 +3578,13 @@ function renderPartList() {
     </div>
     ${list.length === 0 ? `<div class="empty"><div class="empty-icon">🤝</div><p>無符合條件的窗口</p></div>` : `
     <table>
-      <thead><tr><th>公司名稱</th><th>聯繫人</th><th>品牌</th></tr></thead>
+      <thead><tr><th>類別</th><th>公司名稱</th><th>聯繫人</th><th>品牌</th></tr></thead>
       <tbody>
         ${list.map(p => {
           const brands = [...new Set((p.brands||[]).map(b=>b.brand).filter(Boolean))];
           return `
           <tr class="tr-clickable" onclick="openPartnerDetail(${p.id})">
+            <td><span class="tag" style="font-size:11px">${p.category||'-'}</span></td>
             <td>
               <strong>${p.company||p.companyEn||'-'}</strong>
               ${p.companyEn && p.company ? `<span style="font-size:11px;color:var(--text3);margin-left:4px;">${p.companyEn}</span>` : ''}
