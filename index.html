@@ -1374,6 +1374,8 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .dup-btn-keep:hover { border-color: var(--accent); background: var(--accent-glow); color: var(--text); }
 .dup-btn-replace { background: rgba(192,57,43,0.05); color: var(--red); border-color: rgba(192,57,43,0.25); }
 .dup-btn-replace:hover { background: rgba(192,57,43,0.12); border-color: var(--red); }
+
+
 </style>
 </head>
 <body>
@@ -1480,6 +1482,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 
 <!-- MAIN -->
 <div id="main">
+  
   <div id="page-dashboard"></div>
   <div id="page-customers" style="display:none"></div>
   <div id="page-partners" style="display:none"></div>
@@ -1488,9 +1491,8 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 
 <!-- TOAST -->
 <div id="toast"></div>
-
 <script>
-
+const _C = 'class';
 // ══════════════════════════════════════════════
 //  SUPABASE CONFIG & API
 // ══════════════════════════════════════════════
@@ -1869,7 +1871,7 @@ function renderPage(page) {
 function levelBadge(l) {
   const cls = { L0:'l0',L1:'l1',L2:'l2',L3:'l3',L4:'l4',L5:'l5' };
   const labels = { L0:'L0-公司客戶(非負責)',L1:'L1-陌生',L2:'L2-拜訪過',L3:'L3-有詢價',L4:'L4-有成交過',L5:'L5-穩定熟客' };
-  return `<span class="badge badge-${cls[l]||'l1'}">${labels[l]||l}</span>`;
+  return '<span '+_C+'="badge badge-'+(cls[l]||'l1')+'">'+( labels[l]||l)+'</span>';
 }
 
 function industryBadge(ind) {
@@ -1881,7 +1883,7 @@ function industryBadge(ind) {
     npo: ['badge-npo','財團法人'],
   };
   const [cls, label] = map[ind] || ['','未知'];
-  return `<span class="badge ${cls}">${label}</span>`;
+  return '<span '+_C+'="badge '+cls+'">'+ label+'</span>';
 }
 
 function methodBadge(m) {
@@ -1889,7 +1891,7 @@ function methodBadge(m) {
     '電話':'badge-phone','LINE':'badge-line','MAIL':'badge-mail',
     '實體':'badge-meet','視訊':'badge-video'
   };
-  return `<span class="badge ${map[m]||''}">${m}</span>`;
+  return '<span '+_C+'="badge '+(map[m]||'')+'">'+m+'</span>';
 }
 
 function toast(msg) {
@@ -2014,6 +2016,7 @@ function removeTracking(custId, logId) {
   if (l) { l.track = '不追蹤'; l.trackDate = ''; }
   renderDashboard();
 }
+
 
 function renderDashboard() {
   const el = document.getElementById('page-dashboard');
@@ -3506,18 +3509,45 @@ function renderPartList() {
     );
   }
   if (_PF.category) list = list.filter(p => p.category === _PF.category);
-  if (_PF.catKey)   list = list.filter(p => (p.brands||[]).some(b => b.catKey === _PF.catKey));
-  if (_PF.sub)      list = list.filter(p => (p.brands||[]).some(b => b.subcat === _PF.sub));
-  if (_PF.brand)    list = list.filter(p => (p.brands||[]).some(b => b.brand === _PF.brand));
+  if (_PF.catKey)   list = list.filter(p => (p.brands||[]).some(b => {
+    if (b.catKey) return b.catKey === _PF.catKey;
+    // dealer format: _dealerKey = "vendorId|sub", derive catKey from vendor
+    if (b._dealerKey) {
+      const vid = parseInt(b._dealerKey.split('|')[0]);
+      const v = DB_VENDORS.list.find(x=>x.id===vid);
+      return v ? v.cats.includes(_PF.catKey) : false;
+    }
+    return false;
+  }));
+  if (_PF.sub)      list = list.filter(p => (p.brands||[]).some(b => (b.subcat||'') === _PF.sub || (b._dealerKey||'').split('|')[1] === _PF.sub));
+  if (_PF.brand)    list = list.filter(p => (p.brands||[]).some(b => (b.brand||'') === _PF.brand));
 
   const hasFilter = Object.entries(_PF).some(([k,v])=>k!=='_showAdv'&&v!=='');
   const categories = ['代理商','原廠','技術支援','同業','顧問','其它'];
   const adv = _PF._showAdv;
   const cnt = Object.entries(_PF).filter(([k,v])=>k!=='_showAdv'&&v!=='').length;
 
-  const allCatKeys = [...new Set(DB.partners.flatMap(p=>(p.brands||[]).map(b=>b.catKey).filter(Boolean)))];
-  const allSubs    = [...new Set(DB.partners.flatMap(p=>(p.brands||[]).map(b=>b.subcat).filter(Boolean)))].filter(Boolean).sort((a,b)=>a.localeCompare(b,'zh'));
-  const allBrands  = [...new Set(DB.partners.flatMap(p=>(p.brands||[]).map(b=>b.brand).filter(Boolean)))].sort((a,b)=>a.localeCompare(b,'zh'));
+  // Collect all catKeys including from dealer brands (via vendor lookup)
+  const allCatKeysSet = new Set();
+  const allSubsSet = new Set();
+  const allBrandsSet = new Set();
+  DB.partners.forEach(p => {
+    (p.brands||[]).forEach(b => {
+      if (b.catKey) allCatKeysSet.add(b.catKey);
+      if (b.subcat) allSubsSet.add(b.subcat);
+      if (b.brand) allBrandsSet.add(b.brand);
+      if (b._dealerKey) {
+        const [vidStr, sub] = b._dealerKey.split('|');
+        const v = DB_VENDORS.list.find(x=>x.id===parseInt(vidStr));
+        if (v) v.cats.forEach(k => allCatKeysSet.add(k));
+        if (sub) allSubsSet.add(sub);
+        if (b.brand) allBrandsSet.add(b.brand);
+      }
+    });
+  });
+  const allCatKeys = [...allCatKeysSet];
+  const allSubs    = [...allSubsSet].filter(Boolean).sort((a,b)=>a.localeCompare(b,'zh'));
+  const allBrands  = [...allBrandsSet].sort((a,b)=>a.localeCompare(b,'zh'));
 
   return `
   <div class="cust-search-panel" style="margin-bottom:14px;">
@@ -5876,6 +5906,7 @@ function togglePw() {
   inp.type = inp.type === 'password' ? 'text' : 'password';
   if (eye) eye.textContent = inp.type === 'password' ? '👁' : '🙈';
 }
+
 
 // Check if already authenticated this session
 if (sessionStorage.getItem('crm_auth') === 'ok') {
