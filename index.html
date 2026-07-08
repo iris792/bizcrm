@@ -3608,25 +3608,40 @@ function renderPartList() {
     </div>
     ${list.length === 0 ? `<div class="empty"><div class="empty-icon">🤝</div><p>無符合條件的窗口</p></div>` : `
     <table>
-      <thead><tr><th>類別</th><th>公司名稱</th><th>聯繫人</th><th>品牌</th></tr></thead>
+      <thead><tr><th style="width:100px">類別</th><th>公司名稱</th><th>聯繫人</th><th>品牌</th></tr></thead>
       <tbody>
-        ${list.map(p => {
-          const brands = [...new Set((p.brands||[]).map(b=>b.brand).filter(Boolean))];
-          return `
-          <tr class="tr-clickable" onclick="openPartnerDetail(${p.id})">
-            <td><span class="tag" style="font-size:11px">${p.category||'-'}</span></td>
-            <td>
-              <strong>${p.company||p.companyEn||'-'}</strong>
-              ${p.companyEn && p.company ? `<span style="font-size:11px;color:var(--text3);margin-left:4px;">${p.companyEn}</span>` : ''}
-            </td>
-            <td>
-              ${(p.contacts||[]).filter(ct=>ct.name&&ct.name!=='尚無').map(ct=>
-                `<div style="font-size:12px;">${ct.primary?'<span style="color:var(--accent);font-size:10px;margin-right:3px;">★</span>':''}${ct.name}${ct.dept?'<span style="color:var(--text3);font-size:11px;margin-left:4px;">'+ct.dept+'</span>':''}</div>`
-              ).join('') || '<span style="color:var(--text3);font-size:11px;">尚無</span>'}
-            </td>
-            <td style="line-height:1.8">${brands.length ? brands.map(b=>`<span class="tag" style="font-size:11px">${b}</span>`).join(' ') : '<span style="color:var(--text3);font-size:12px">-</span>'}</td>
-          </tr>`;
-        }).join('')}
+        ${(() => {
+          const CAT_ORDER = ['代理商','原廠','技術支援','同業','顧問','其它'];
+          const sorted = [...list].sort((a,b) => {
+            const ai = CAT_ORDER.indexOf(a.category), bi = CAT_ORDER.indexOf(b.category);
+            if (ai !== bi) return (ai===-1?99:ai) - (bi===-1?99:bi);
+            return (a.company||a.companyEn||'').localeCompare(b.company||b.companyEn||'', 'zh');
+          });
+          let lastCat = null;
+          return sorted.map(p => {
+            const brands = [...new Set((p.brands||[]).map(b=>b.brand).filter(Boolean))];
+            const showCat = p.category !== lastCat;
+            lastCat = p.category;
+            const catCell = showCat
+              ? `<span ${_C}="tag" style="font-size:11px">${p.category||'-'}</span>`
+              : '';
+            const borderStyle = showCat ? 'border-top:2px solid var(--border2)' : '';
+            return `
+            <tr ${_C}="tr-clickable" onclick="openPartnerDetail(${p.id})" style="${borderStyle}">
+              <td>${catCell}</td>
+              <td>
+                <strong>${p.company||p.companyEn||'-'}</strong>
+                ${p.companyEn && p.company ? `<span style="font-size:11px;color:var(--text3);margin-left:4px;">${p.companyEn}</span>` : ''}
+              </td>
+              <td>
+                ${(p.contacts||[]).filter(ct=>ct.name&&ct.name!=='尚無').map(ct=>
+                  `<div style="font-size:12px;">${ct.primary?'<span style="color:var(--accent);font-size:10px;margin-right:3px;">★</span>':''}${ct.name}${ct.dept?'<span style="color:var(--text3);font-size:11px;margin-left:4px;">'+ct.dept+'</span>':''}</div>`
+                ).join('') || '<span style="color:var(--text3);font-size:11px;">尚無</span>'}
+              </td>
+              <td style="line-height:1.8">${brands.length ? brands.map(b=>`<span ${_C}="tag" style="font-size:11px">${b}</span>`).join(' ') : '<span style="color:var(--text3);font-size:12px">-</span>'}</td>
+            </tr>`;
+          }).join('');
+        })()}
       </tbody>
     </table>`}
   </div>`;
@@ -4476,37 +4491,66 @@ function renderVendorList() {
     ${list.length === 0 ? `<div class="empty"><div class="empty-icon">🏭</div><p>無符合的原廠</p></div>` : `
     <table>
       <thead><tr>
-        <th>中文名稱</th>
-        <th>類別 ／ 細項</th>
+        <th style="width:160px">類別</th>
+        <th>名稱</th>
+        <th>細項</th>
       </tr></thead>
       <tbody>
-        ${list.map(v => {
-          // Group subs by cat
-          const grouped = {};
-          v.products.forEach(p => {
-            if (!p.cat) return;
-            if (!grouped[p.cat]) grouped[p.cat] = new Set();
-            if (p.sub) grouped[p.cat].add(p.sub);
+        ${(() => {
+          // Sort list by first cat, then vendor name
+          const catOrder = Object.keys(PROD_CATS);
+          const rows = [];
+          // Expand: one row per vendor per cat
+          list.forEach(v => {
+            const grouped = {};
+            v.products.forEach(p => {
+              if (!p.cat) return;
+              if (!grouped[p.cat]) grouped[p.cat] = new Set();
+              if (p.sub) grouped[p.cat].add(p.sub);
+            });
+            // Sort by catOrder
+            const sortedCats = Object.keys(grouped).sort((a,b) => catOrder.indexOf(a) - catOrder.indexOf(b));
+            if (sortedCats.length === 0) {
+              rows.push({ cat:'', catLabel:'-', icon:'', vendor: v, subs: [] });
+            } else {
+              sortedCats.forEach(catKey => {
+                rows.push({ cat: catKey, catLabel: PROD_CATS[catKey]?.label||catKey, icon: PROD_CATS[catKey]?.icon||'', vendor: v, subs: [...grouped[catKey]] });
+              });
+            }
           });
-          const catRows = Object.entries(grouped).map(([catKey, subs]) =>
-            `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:2px 0;">
-              <span class="tag" style="background:var(--surface2);">${PROD_CATS[catKey]?.icon||''} ${PROD_CATS[catKey]?.label||catKey}</span>
-              <span style="color:var(--text3);font-size:11px;">→</span>
-              ${[...subs].map(s=>`<span class="tag" style="font-size:11px">${s}</span>`).join('')}
-            </div>`
-          ).join('');
-          return `
-          <tr class="tr-clickable" onclick="openVendorDetail(${v.id})">
-            <td>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <strong>${v.nameZh||v.nameEn||'-'}</strong>
-                ${v.nameEn && v.nameZh ? `<span style="font-size:11px;color:var(--text3)">${v.nameEn}</span>` : ''}
-                ${v.country ? `<span class="tag" style="font-size:10px">${v.country}</span>` : ''}
-              </div>
-            </td>
-            <td>${catRows || '<span style="color:var(--text3);font-size:12px">-</span>'}</td>
-          </tr>`;
-        }).join('')}
+          // Sort rows by catOrder first, then vendorName
+          rows.sort((a,b) => {
+            const ai = catOrder.indexOf(a.cat), bi = catOrder.indexOf(b.cat);
+            if (ai !== bi) return (ai===-1?99:ai) - (bi===-1?99:bi);
+            return (a.vendor.nameZh||a.vendor.nameEn||'').localeCompare(b.vendor.nameZh||b.vendor.nameEn||'', 'zh');
+          });
+          // Track last cat for visual grouping
+          let lastCat = null;
+          return rows.map(row => {
+            const v = row.vendor;
+            const showCatLabel = row.cat !== lastCat;
+            lastCat = row.cat;
+            const catCell = showCatLabel
+              ? `<span ${_C}="tag" style="font-size:11px;background:var(--surface2)">${row.icon} ${row.catLabel}</span>`
+              : `<span style="color:var(--text3);font-size:11px;">　</span>`;
+            const subsHtml = row.subs.length
+              ? row.subs.map(s=>`<span ${_C}="tag" style="font-size:11px">${s}</span>`).join(' ')
+              : '<span style="color:var(--text3);font-size:12px">-</span>';
+            const borderStyle = showCatLabel && lastCat !== null ? 'border-top:2px solid var(--border2)' : '';
+            return `
+            <tr ${_C}="tr-clickable" onclick="openVendorDetail(${v.id})" style="${borderStyle}">
+              <td>${catCell}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <strong>${v.nameZh||v.nameEn||'-'}</strong>
+                  ${v.nameEn && v.nameZh ? `<span style="font-size:11px;color:var(--text3)">${v.nameEn}</span>` : ''}
+                  ${v.country ? `<span ${_C}="tag" style="font-size:10px">${v.country}</span>` : ''}
+                </div>
+              </td>
+              <td>${subsHtml}</td>
+            </tr>`;
+          }).join('');
+        })()}
       </tbody>
     </table>`}
   </div>`;
