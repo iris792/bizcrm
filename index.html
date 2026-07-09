@@ -1319,7 +1319,65 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─── IMPORT STEPS ─── */
+
+/* ══ SCHEDULE MODULE ══ */
+.sch-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; border: 2px solid #2C1A0E; border-radius: 14px; overflow: hidden; }
+.sch-dow { background: var(--accent); color: #fff; font-size: 11px; font-weight: 800; text-align: center; padding: 8px 4px; border-bottom: 2px solid #2C1A0E; }
+.sch-dow:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.3); }
+.sch-day { min-height: 110px; padding: 4px; background: var(--surface); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); position: relative; vertical-align: top; cursor: default; transition: background 0.1s; }
+.sch-day:nth-child(7n) { border-right: none; }
+.sch-day.sch-today { background: #FFFBEA; }
+.sch-day.sch-other { background: #F5F5F0; }
+.sch-day.sch-drag-over { background: var(--accent-glow); outline: 2px dashed var(--accent); outline-offset: -2px; }
+.sch-day-num { font-size: 11px; font-weight: 700; color: var(--text3); margin-bottom: 3px; display: flex; align-items: center; justify-content: space-between; }
+.sch-day-num.today-badge span { background: var(--accent); color: #fff; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; }
+.sch-add-btn { font-size: 14px; cursor: pointer; color: var(--text3); line-height: 1; padding: 0 2px; opacity: 0.5; transition: opacity 0.15s; }
+.sch-day:hover .sch-add-btn { opacity: 1; }
+.sch-event { border-radius: 6px; padding: 3px 6px; margin-bottom: 3px; font-size: 11px; font-weight: 600; cursor: grab; display: flex; align-items: flex-start; gap: 4px; border: 1.5px solid transparent; transition: opacity 0.15s; user-select: none; position: relative; }
+.sch-event:active { cursor: grabbing; opacity: 0.7; }
+.sch-event.done { opacity: 0.45; text-decoration: line-through; }
+.sch-event.type-cust { background: #E8F5E9; border-color: #81C784; color: #1B5E20; }
+.sch-event.type-part { background: #E3F2FD; border-color: #64B5F6; color: #0D47A1; }
+.sch-event.type-admin { background: #FFF3E0; border-color: #FFB74D; color: #BF360C; }
+.sch-event-check { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; accent-color: var(--accent); cursor: pointer; }
+.sch-event-body { flex: 1; min-width: 0; }
+.sch-event-time { font-size: 10px; opacity: 0.7; }
+.sch-event-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sch-event-del { position: absolute; top: 2px; right: 2px; background: none; border: none; cursor: pointer; font-size: 10px; color: var(--red); opacity: 0; padding: 0; line-height: 1; }
+.sch-event:hover .sch-event-del { opacity: 0.8; }
+.sch-nav { display: flex; align-items: center; gap: 12px; }
+.sch-nav button { background: var(--surface); border: 2px solid #2C1A0E; border-radius: 50px; padding: 5px 14px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; box-shadow: 2px 2px 0 #2C1A0E; }
+.sch-nav button:hover { background: var(--surface2); }
+.sch-nav h2 { font-size: 18px; font-weight: 800; color: var(--text); }
+/* ══ END SCHEDULE CSS ══ */
+
+/* ─── MULTI-SELECT DROPDOWN ─── */
+.ms-wrap { position: relative; }
+.ms-trigger {
+  width: 100%; padding: 9px 13px; border: 2px solid var(--border2); border-radius: 12px;
+  font-size: 13px; font-weight: 600; color: var(--text); background: var(--surface);
+  cursor: pointer; text-align: left; display: flex; align-items: center; justify-content: space-between;
+  gap: 6px; font-family: inherit;
+}
+.ms-trigger:hover { border-color: var(--accent); }
+.ms-trigger.active { border-color: var(--accent); background: var(--accent-glow); }
+.ms-trigger-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--surface); border: 2px solid var(--accent); border-radius: 12px;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.1); z-index: 500; max-height: 220px; overflow-y: auto;
+  display: none;
+}
+.ms-dropdown.open { display: block; }
+.ms-option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text2);
+}
+.ms-option:hover { background: var(--surface2); }
+.ms-option input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; flex-shrink: 0; }
+.ms-option.selected { color: var(--accent); }
+.ms-option.city-group-head { cursor: pointer; font-weight: 700; background: var(--surface2); border-bottom: 1px solid var(--border); }
+.ms-option.city-group-head:hover { background: var(--accent-glow); }
 .import-step {
   display: flex;
   gap: 14px;
@@ -1454,6 +1512,12 @@ textarea.form-control { resize: vertical; min-height: 80px; }
       </span>
       <span class="nav-text">產品資訊</span>
     </div>
+    <div class="nav-item" data-page="schedule" onclick="nav('schedule')">
+      <span class="nav-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </span>
+      <span class="nav-text">業務行程</span>
+    </div>
 
     <!-- 登出區塊 -->
     <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 12px;border-top:2px solid #C8E6C9;background:var(--sidebar-bg);">
@@ -1475,7 +1539,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         登出
       </button>
-      <div style="text-align:center;margin-top:8px;font-size:10px;color:#A5D6A7;letter-spacing:0.05em;">v 20260702_1648</div>
+      <div style="text-align:center;margin-top:8px;font-size:10px;color:#A5D6A7;letter-spacing:0.05em;">v 20260709_1215</div>
     </div>
   </div>
 </nav>
@@ -1487,6 +1551,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
   <div id="page-customers" style="display:none"></div>
   <div id="page-partners" style="display:none"></div>
   <div id="page-products" style="display:none"></div>
+  <div id="page-schedule" style="display:none"></div>
 </div>
 
 <!-- TOAST -->
@@ -1502,32 +1567,52 @@ const SB_HEADERS = { 'Content-Type':'application/json', 'apikey': SB_KEY, 'Autho
 
 async function sbGet(table, params) {
   const qs = params ? '?' + params : '?order=created_at.asc';
-  const r = await fetch(SB_URL + '/rest/v1/' + table + qs, { headers: SB_HEADERS });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/' + table + qs, { headers: SB_HEADERS });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  } catch(e) {
+    if (e.message === 'Failed to fetch') throw new Error('無法連線到資料庫，請確認網路連線或改用 GitHub Pages 開啟系統');
+    throw e;
+  }
 }
 
 async function sbInsert(table, data) {
-  const r = await fetch(SB_URL + '/rest/v1/' + table, {
-    method:'POST', headers: SB_HEADERS, body: JSON.stringify(data)
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/' + table, {
+      method:'POST', headers: SB_HEADERS, body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  } catch(e) {
+    if (e.message === 'Failed to fetch') throw new Error('網路連線失敗，資料僅暫存於本機');
+    throw e;
+  }
 }
 
 async function sbUpdate(table, id, data) {
-  const r = await fetch(SB_URL + '/rest/v1/' + table + '?id=eq.' + id, {
-    method:'PATCH', headers: SB_HEADERS, body: JSON.stringify(data)
-  });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+      method:'PATCH', headers: SB_HEADERS, body: JSON.stringify(data)
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return r.json();
+  } catch(e) {
+    if (e.message === 'Failed to fetch') throw new Error('網路連線失敗，資料僅暫存於本機');
+    throw e;
+  }
 }
 
 async function sbDelete(table, id) {
-  const r = await fetch(SB_URL + '/rest/v1/' + table + '?id=eq.' + id, {
-    method:'DELETE', headers: SB_HEADERS
-  });
-  if (!r.ok) throw new Error(await r.text());
+  try {
+    const r = await fetch(SB_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+      method:'DELETE', headers: SB_HEADERS
+    });
+    if (!r.ok) throw new Error(await r.text());
+  } catch(e) {
+    if (e.message === 'Failed to fetch') throw new Error('網路連線失敗');
+    throw e;
+  }
 }
 
 // Row converters: DB ↔ Supabase column names
@@ -1640,7 +1725,13 @@ async function loadFromSupabase() {
     renderPage('dashboard');
   } catch(e) {
     hideLoadingOverlay();
-    showDbError(e.message);
+    if (e.message.includes('無法連線') || e.message.includes('Failed to fetch')) {
+      // In preview/local environment - just render with local demo data
+      toast('⚠ 離線模式：使用本機資料（請上傳至 GitHub Pages 以連線資料庫）');
+      renderPage('dashboard');
+    } else {
+      showDbError(e.message);
+    }
   }
 }
 
@@ -1849,7 +1940,7 @@ function nav(page) {
   document.querySelectorAll('.nav-item').forEach(el => {
     el.classList.toggle('active', el.dataset.page === page);
   });
-  ['dashboard','customers','partners','products'].forEach(p => {
+  ['dashboard','customers','partners','products','schedule'].forEach(p => {
     document.getElementById('page-'+p).style.display = p === page ? '' : 'none';
   });
   renderPage(page);
@@ -1861,6 +1952,7 @@ function renderPage(page) {
     customers: renderCustomers,
     partners: renderPartners,
     products: renderProducts,
+    schedule: renderSchedule,
   };
   if (pages[page]) pages[page]();
 }
@@ -2127,22 +2219,89 @@ function renderDashboard() {
       </div>
     </div>
 
-    <!-- CALENDAR -->
-    <div class="cal-wrap" style="margin-top:20px;">
-      <div class="cal-head">
-        <h3>${calYear}年 ${calMonth+1}月</h3>
-        <div class="cal-nav">
-          <button onclick="calPrev()">‹</button>
-          <button onclick="calToday()">今日</button>
-          <button onclick="calNext()">›</button>
+    <!-- 產業類別 & PC 規模 統計 -->
+    <div class="dash-two-col" style="margin-top:20px;">
+
+      <!-- 產業類別統計 -->
+      <div class="dash-block">
+        <div class="dash-block-head">
+          <span class="dash-block-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            產業類別分布
+          </span>
+          <span class="dash-block-count">${DB.customers.filter(c=>c.level!=='L0').length} 家</span>
+        </div>
+        <div class="dash-block-body" style="padding:8px 0;">
+          ${(() => {
+            const custs = DB.customers.filter(c => c.level !== 'L0');
+            const indMap = {
+              gov:'政府', medical:'醫療', edu:'教育', npo:'財團法人', corp:'企業',
+            };
+            const counts = {};
+            custs.forEach(c => {
+              const label = indMap[c.industry] || c.industry || '未分類';
+              counts[label] = (counts[label]||0) + 1;
+            });
+            const total = custs.length || 1;
+            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+            const colors = ['var(--accent)','var(--l2)','var(--l3)','var(--l4)','var(--l5)','var(--l1)','var(--teal)','var(--purple)'];
+            return sorted.map(([label, cnt], i) => {
+              const pct = Math.round(cnt/total*100);
+              return `<div style="display:flex;align-items:center;gap:8px;padding:5px 14px;">
+                <div style="width:90px;font-size:12px;color:var(--text2);flex-shrink:0;font-weight:600">${label}</div>
+                <div style="flex:1;background:var(--surface2);border-radius:6px;height:10px;overflow:hidden">
+                  <div style="height:100%;width:${pct}%;background:${colors[i%colors.length]};border-radius:6px;transition:width 0.4s"></div>
+                </div>
+                <div style="font-size:12px;font-weight:700;color:var(--text);min-width:28px;text-align:right">${cnt}</div>
+                <div style="font-size:11px;color:var(--text3);min-width:32px">${pct}%</div>
+              </div>`;
+            }).join('') || '<div class="dash-empty">尚無客戶資料</div>';
+          })()}
         </div>
       </div>
-      <div class="cal-grid" id="cal-grid"></div>
+
+      <!-- PC 規模統計 -->
+      <div class="dash-block">
+        <div class="dash-block-head">
+          <span class="dash-block-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            PC 數規模分布
+          </span>
+          <span class="dash-block-count">${DB.customers.filter(c=>c.level!=='L0').length} 家</span>
+        </div>
+        <div class="dash-block-body" style="padding:8px 0;">
+          ${(() => {
+            const custs = DB.customers.filter(c => c.level !== 'L0');
+            const order = ['50台以下','200台以下','300台以下','300台以上'];
+            const counts = {};
+            custs.forEach(c => {
+              const k = c.pcscale || '未填寫';
+              counts[k] = (counts[k]||0) + 1;
+            });
+            const total = custs.length || 1;
+            const sorted = [
+              ...order.filter(k=>counts[k]).map(k=>[k,counts[k]]),
+              ...Object.entries(counts).filter(([k])=>!order.includes(k)).sort((a,b)=>b[1]-a[1])
+            ];
+            const colors = ['var(--accent)','var(--l3)','var(--l2)','var(--l4)','var(--text3)'];
+            return sorted.map(([label, cnt], i) => {
+              const pct = Math.round(cnt/total*100);
+              return `<div style="display:flex;align-items:center;gap:8px;padding:5px 14px;">
+                <div style="width:90px;font-size:12px;color:var(--text2);flex-shrink:0;font-weight:600">${label}</div>
+                <div style="flex:1;background:var(--surface2);border-radius:6px;height:10px;overflow:hidden">
+                  <div style="height:100%;width:${pct}%;background:${colors[i%colors.length]};border-radius:6px;transition:width 0.4s"></div>
+                </div>
+                <div style="font-size:12px;font-weight:700;color:var(--text);min-width:28px;text-align:right">${cnt}</div>
+                <div style="font-size:11px;color:var(--text3);min-width:32px">${pct}%</div>
+              </div>`;
+            }).join('') || '<div class="dash-empty">尚無客戶資料</div>';
+          })()}
+        </div>
+      </div>
     </div>
 
   </div>`;
 
-  renderCal();
   renderStatsBlock();
 }
 
@@ -2271,13 +2430,13 @@ const CUST_PAGE_SIZE = 20;
 // Search filter state
 const _CF = {
   keyword: '',
-  industry: '',
-  level: '',
-  owner: '',
-  source: '',
-  si: '',
-  pcscale: '',
-  region: '',
+  industry: [],
+  level: ['L1','L2','L3','L4','L5'],
+  owner: ['無','Iris'],
+  source: [],
+  si: [],
+  pcscale: [],
+  region: [],
   hasContact: '',
   listed: '',
   blocked: '',
@@ -2294,10 +2453,24 @@ function trunc(str, n) {
 }
 
 function getRegion(c) {
-  // Extract first 3 Chinese characters from address
-  const addr = c.address || '';
+  const addr = (c.address || '').trim();
+  if (!addr) return '';
+  // Match pattern: 縣市 (3 chars ending 市/縣) + 區/鎮/鄉/市 (3 chars)
+  const m = addr.match(/^(.{2,3}[市縣])(.{2,3}[區鎮鄉市])/);
+  if (m) return m[1] + m[2]; // e.g. 台北市中正區
+  // Fallback: just city (first 3 chars ending in 市 or 縣)
+  const city = addr.match(/^.{2,3}[市縣]/);
+  if (city) return city[0];
+  // Last fallback: first 3 Chinese chars
   const chinese = addr.match(/[一-鿿㐀-䶿]/g) || [];
   return chinese.slice(0,3).join('');
+}
+
+// Get just the city part (for grouping)
+function getCity(c) {
+  const addr = (c.address || '').trim();
+  const m = addr.match(/^.{2,3}[市縣]/);
+  return m ? m[0] : getRegion(c);
 }
 
 function custHasTracking(c) {
@@ -2318,23 +2491,36 @@ function custKeywordMatch(c, kw) {
 }
 
 function applyCustFilter(list) {
+  const hasArr = arr => Array.isArray(arr) ? arr.length > 0 : !!arr;
+  const inArr  = (arr, val) => Array.isArray(arr) ? arr.includes(val) : arr === val;
   return list.filter(c => {
     if (!custKeywordMatch(c, _CF.keyword)) return false;
-    if (_CF.industry) {
-      if (['製造業','高科技/半導體','醫療生技','食品業','服務業'].includes(_CF.industry)) {
-        if (c.industry !== 'corp' || c.industryDetail !== _CF.industry) return false;
-      } else if (_CF.industry === 'corp') {
-        if (c.industry !== 'corp') return false;
-      } else {
-        if (c.industry !== _CF.industry) return false;
-      }
+    if (hasArr(_CF.industry)) {
+      const ind = _CF.industry;
+      const match = (Array.isArray(ind) ? ind : [ind]).some(v => {
+        if (['製造業','高科技/半導體','醫療生技','食品業','服務業'].includes(v))
+          return c.industry === 'corp' && c.industryDetail === v;
+        if (v === 'corp') return c.industry === 'corp';
+        return c.industry === v;
+      });
+      if (!match) return false;
     }
-    if (_CF.level  && c.level  !== _CF.level)  return false;
-    if (_CF.owner  && c.owner  !== _CF.owner)  return false;
-    if (_CF.source && c.source !== _CF.source) return false;
-    if (_CF.si && (c.si||'') !== _CF.si) return false;
-    if (_CF.pcscale && c.pcscale !== _CF.pcscale) return false;
-    if (_CF.region && getRegion(c) !== _CF.region) return false;
+    if (hasArr(_CF.level)   && !inArr(_CF.level,   c.level))       return false;
+    if (hasArr(_CF.owner)) {
+      const ownerFilter = _CF.owner.map(v => v === '無' ? '' : v);
+      if (!ownerFilter.includes(c.owner||'')) return false;
+    }
+    if (hasArr(_CF.source)  && !inArr(_CF.source,  c.source||''))  return false;
+    if (hasArr(_CF.si)      && !inArr(_CF.si,      c.si||''))      return false;
+    if (hasArr(_CF.pcscale) && !inArr(_CF.pcscale, c.pcscale||'')) return false;
+    if (hasArr(_CF.region)) {
+      const cRegion = getRegion(c); // e.g. 台北市中正區
+      const cCity   = getCity(c);   // e.g. 台北市
+      const match = (Array.isArray(_CF.region) ? _CF.region : [_CF.region]).some(v =>
+        v === cRegion || v === cCity || cRegion.startsWith(v)
+      );
+      if (!match) return false;
+    }
     if (_CF.listed === 'yes' && !c.listed) return false;
     if (_CF.listed === 'no'  &&  c.listed) return false;
     if (_CF.blocked === 'yes' && !c.blocked) return false;
@@ -2353,7 +2539,7 @@ function applyCustFilter(list) {
 
 function activeFilterCount() {
   return Object.entries(_CF)
-    .filter(([k,v]) => k !== 'showAdvanced' && v !== '')
+    .filter(([k,v]) => k !== 'showAdvanced' && k !== '_showAdv' && k !== 'keyword' && (Array.isArray(v) ? v.length > 0 : v !== ''))
     .length;
 }
 
@@ -2434,7 +2620,21 @@ function renderCustList() {
 
   const cnt = activeFilterCount();
   const adv = _CF.showAdvanced;
-  const regions = [...new Set(DB.customers.map(c=>getRegion(c)).filter(v=>v))].sort((a,b)=>a.localeCompare(b,'zh'));
+  // Build region options: city-level + district-level grouped
+  const allRegions = [...new Set(DB.customers.map(c=>getRegion(c)).filter(v=>v))].sort((a,b)=>a.localeCompare(b,'zh'));
+  const allCities = [...new Set(DB.customers.map(c=>getCity(c)).filter(v=>v))].sort((a,b)=>a.localeCompare(b,'zh'));
+  // Merge: cities first (if has sub-districts), then districts
+  const regionOpts = [];
+  allCities.forEach(city => {
+    const districts = allRegions.filter(r => r.startsWith(city) && r !== city);
+    if (districts.length > 1) {
+      regionOpts.push([city, city + '（全部）']);
+      districts.forEach(d => regionOpts.push([d, '　└ ' + d.replace(city,'')]));
+    } else {
+      regionOpts.push([city, city]);
+    }
+  });
+  const regions = regionOpts.length ? regionOpts : allRegions.map(v=>[v,v]);
 
   return `
   <div class="cust-search-panel">
@@ -2458,71 +2658,38 @@ function renderCustList() {
     <div class="adv-filter-grid">
       <div class="adv-filter-group">
         <div class="adv-filter-label">產業類別</div>
-        <select class="form-control adv-sel" onchange="_CF.industry=this.value;refreshCustList()">
-          <option value="">全部</option>
-          <option value="gov"          ${_CF.industry==='gov'?'selected':''}>政府</option>
-          <option value="medical"      ${_CF.industry==='medical'?'selected':''}>醫療</option>
-          <option value="edu"          ${_CF.industry==='edu'?'selected':''}>教育</option>
-          <option value="npo"          ${_CF.industry==='npo'?'selected':''}>財團法人</option>
-          <option value="corp"         ${_CF.industry==='corp'?'selected':''}>企業（全部）</option>
-          <option value="製造業"       ${_CF.industry==='製造業'?'selected':''}>　└ 製造業</option>
-          <option value="高科技/半導體" ${_CF.industry==='高科技/半導體'?'selected':''}>　└ 高科技/半導體</option>
-          <option value="醫療生技"     ${_CF.industry==='醫療生技'?'selected':''}>　└ 醫療生技</option>
-          <option value="食品業"       ${_CF.industry==='食品業'?'selected':''}>　└ 食品業</option>
-          <option value="服務業"       ${_CF.industry==='服務業'?'selected':''}>　└ 服務業</option>
-        </select>
+        ${buildMsDropdown('cf-industry', [
+          ['gov','政府'],['medical','醫療'],['edu','教育'],['npo','財團法人'],
+          ['corp','企業（全部）'],['製造業','　└ 製造業'],['高科技/半導體','　└ 高科技/半導體'],
+          ['醫療生技','　└ 醫療生技'],['食品業','　└ 食品業'],['服務業','　└ 服務業']
+        ], _CF.industry)}
       </div>
       <div class="adv-filter-group">
         <div class="adv-filter-label">等級</div>
-        <select class="form-control adv-sel" onchange="_CF.level=this.value;refreshCustList()">
-          <option value="">全部</option>
-          <option value="L0" ${_CF.level==='L0'?'selected':''}>L0 - 公司客戶(非負責)</option>
-          <option value="L1" ${_CF.level==='L1'?'selected':''}>L1 - 陌生</option>
-          <option value="L2" ${_CF.level==='L2'?'selected':''}>L2 - 拜訪過</option>
-          <option value="L3" ${_CF.level==='L3'?'selected':''}>L3 - 有詢價</option>
-          <option value="L4" ${_CF.level==='L4'?'selected':''}>L4 - 有成交過</option>
-          <option value="L5" ${_CF.level==='L5'?'selected':''}>L5 - 穩定熟客</option>
-        </select>
+        ${buildMsDropdown('cf-level', [
+          ['L0','L0 - 公司客戶(非負責)'],['L1','L1 - 陌生'],['L2','L2 - 拜訪過'],
+          ['L3','L3 - 有詢價'],['L4','L4 - 有成交過'],['L5','L5 - 穩定熟客']
+        ], _CF.level)}
       </div>
       <div class="adv-filter-group">
         <div class="adv-filter-label">地區</div>
-        <select class="form-control adv-sel" onchange="_CF.region=this.value;refreshCustList()">
-          <option value="">全部</option>
-          ${regions.map(v=>`<option value="${v}" ${_CF.region===v?'selected':''}>${v}</option>`).join('')}
-        </select>
+        ${buildRegionDropdown(regions, _CF.region)}
       </div>
       <div class="adv-filter-group">
         <div class="adv-filter-label">公司負責業務</div>
-        <select class="form-control adv-sel" onchange="_CF.owner=this.value;refreshCustList()">
-          <option value="">全部</option>
-          ${owners.map(v=>`<option value="${v}" ${_CF.owner===v?'selected':''}>${v}</option>`).join('')}
-        </select>
+        ${buildMsDropdown('cf-owner', owners.map(v=>[v,v]), _CF.owner)}
       </div>
       <div class="adv-filter-group">
         <div class="adv-filter-label">資訊來源</div>
-        <select class="form-control adv-sel" onchange="_CF.source=this.value;refreshCustList()">
-          <option value="">全部</option>
-          <option value="陌生開發" ${_CF.source==='陌生開發'?'selected':''}>陌生開發</option>
-          <option value="內部提供" ${_CF.source==='內部提供'?'selected':''}>內部提供</option>
-          <option value="協力廠商" ${_CF.source==='協力廠商'?'selected':''}>協力廠商</option>
-        </select>
+        ${buildMsDropdown('cf-source', [['陌生開發','陌生開發'],['內部提供','內部提供'],['協力廠商','協力廠商']], _CF.source)}
       </div>
       <div class="adv-filter-group">
         <div class="adv-filter-label">PC 數規模</div>
-        <select class="form-control adv-sel" onchange="_CF.pcscale=this.value;refreshCustList()">
-          <option value="">全部</option>
-          <option value="50台以下"  ${_CF.pcscale==='50台以下'?'selected':''}>50台以下</option>
-          <option value="200台以下" ${_CF.pcscale==='200台以下'?'selected':''}>200台以下</option>
-          <option value="300台以下" ${_CF.pcscale==='300台以下'?'selected':''}>300台以下</option>
-          <option value="300台以上" ${_CF.pcscale==='300台以上'?'selected':''}>300台以上</option>
-        </select>
+        ${buildMsDropdown('cf-pcscale', [['50台以下','50台以下'],['200台以下','200台以下'],['300台以下','300台以下'],['300台以上','300台以上']], _CF.pcscale)}
       </div>
       <div class="adv-filter-group">
         <div class="adv-filter-label">長期配合 SI</div>
-        <select class="form-control adv-sel" onchange="_CF.si=this.value;refreshCustList()">
-          <option value="">全部</option>
-          ${[...new Set(DB.customers.map(c=>c.si||'').filter(v=>v.trim()))].sort().map(v=>`<option value="${v}" ${_CF.si===v?'selected':''}>${v}</option>`).join('')}
-        </select>
+        ${buildMsDropdown('cf-si', [...new Set(DB.customers.map(c=>c.si||'').filter(v=>v.trim()))].sort().map(v=>[v,v]), _CF.si)}
       </div>
       <div class="adv-filter-group">
         <div class="adv-filter-label">上市櫃</div>
@@ -2601,7 +2768,7 @@ function renderCustList() {
           <tr class="tr-clickable" onclick="openCustomerDetail(${c.id})">
             <td style="max-width:140px;">
               <div style="display:flex;align-items:center;gap:5px;">
-                <strong style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${c.company}">${trunc(c.company,6)}</strong>
+                <strong style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${c.company}">${trunc(c.company,15)}</strong>
                 ${c.listed ? '<span class="listed-badge">上市</span>' : ''}
                 ${c.level==='L1'&&c.blocked ? '<span class="tag" style="color:var(--red);font-size:10px;">擋</span>' : ''}
                 ${custHasTracking(c) ? '<span style="font-size:11px;" title="有待追蹤">📌</span>' : ''}
@@ -2633,17 +2800,157 @@ function renderCustList() {
   </div>`;
 }
 
-function refreshCustList() {
+function refreshCustList(keepOpenDropdownId) {
+  // Save expanded city groups and scroll position before re-render
+  const openGroups = [];
+  document.querySelectorAll('[id^="rgn-grp-"]').forEach(el => {
+    if (el.style.display !== 'none') openGroups.push(el.id.replace('rgn-grp-',''));
+  });
+  const dropEl = keepOpenDropdownId ? document.getElementById('ms-drop-' + keepOpenDropdownId) : null;
+  const scrollTop = dropEl ? dropEl.scrollTop : 0;
+
   custPage = 0;
   _refreshWithFocus('cust-content', renderCustList, 'cust-kw-input');
+
+  // Restore open dropdown
+  if (keepOpenDropdownId) {
+    const drop = document.getElementById('ms-drop-' + keepOpenDropdownId);
+    if (drop) {
+      drop.classList.add('open');
+      drop.scrollTop = scrollTop;
+    }
+  }
+  // Restore expanded city groups
+  openGroups.forEach(key => {
+    const grp = document.getElementById('rgn-grp-' + key);
+    const arr = document.getElementById('rgn-arr-' + key);
+    if (grp) grp.style.display = 'block';
+    if (arr) arr.style.transform = 'rotate(90deg)';
+  });
 }
 
 function refreshCustListNoReset() {
   _refreshWithFocus('cust-content', renderCustList, 'cust-kw-input');
 }
 
+// ── Multi-select dropdown helper ──
+// ── Region dropdown: collapsible city groups ──
+function buildRegionDropdown(regionOpts, selected) {
+  const sel = Array.isArray(selected) ? selected : (selected ? [selected] : []);
+  const label = sel.length === 0 ? '全部' : sel.length === 1 ? sel[0] : sel.length + ' 項已選';
+  const isActive = sel.length > 0;
+
+  // Group options into cities with districts
+  const cities = [];
+  let curCity = null;
+  regionOpts.forEach(([val, lbl]) => {
+    if (!lbl.startsWith('　└')) {
+      curCity = { val, lbl: lbl.replace('（全部）',''), districts: [] };
+      cities.push(curCity);
+    } else if (curCity) {
+      curCity.districts.push({ val, lbl: lbl.replace('　└ ','') });
+    }
+  });
+
+  // Count selected per city
+  let optionsHtml = `<div ${_C}="ms-option ${sel.length===0?'selected':''}" onclick="toggleMsAll('cf-region')">
+    <input type="checkbox" ${sel.length===0?'checked':''} readonly> 全部
+  </div>`;
+
+  cities.forEach((city, idx) => {
+    const citySelected = sel.includes(city.val);
+    const districtSelCount = city.districts.filter(d => sel.includes(d.val)).length;
+    const anySelected = citySelected || districtSelCount > 0;
+    const hasDistricts = city.districts.length > 0;
+    const groupKey = 'rg' + idx;
+
+    if (!hasDistricts) {
+      optionsHtml += `<div ${_C}="ms-option ${citySelected?'selected':''}" onclick="toggleMsOpt('cf-region','${city.val.replace(/'/g,"\\'")}')">
+        <input type="checkbox" ${citySelected?'checked':''} readonly> ${city.lbl}
+      </div>`;
+    } else {
+      optionsHtml += `
+      <div ${_C}="ms-option city-group-head ${anySelected?'selected':''}" onclick="event.stopPropagation();toggleCityGroup('${groupKey}')">
+        <span style="display:flex;align-items:center;gap:6px;flex:1">
+          <span id="rgn-arr-${groupKey}" style="font-size:10px;transition:transform 0.15s">▶</span>
+          ${city.lbl}${anySelected?` <span style="font-size:10px;color:var(--accent)">(${districtSelCount||'全'})</span>`:''}
+        </span>
+      </div>
+      <div id="rgn-grp-${groupKey}" style="display:none">
+        <div ${_C}="ms-option ${citySelected?'selected':''}" style="padding-left:28px" onclick="toggleMsOpt('cf-region','${city.val.replace(/'/g,"\\'")}');event.stopPropagation()">
+          <input type="checkbox" ${citySelected?'checked':''} readonly> 全部 ${city.lbl}
+        </div>
+        ${city.districts.map(d => `
+        <div ${_C}="ms-option ${sel.includes(d.val)?'selected':''}" style="padding-left:28px" onclick="toggleMsOpt('cf-region','${d.val.replace(/'/g,"\\'")}');event.stopPropagation()">
+          <input type="checkbox" ${sel.includes(d.val)?'checked':''} readonly> ${d.lbl}
+        </div>`).join('')}
+      </div>`;
+    }
+  });
+
+  return `<div ${_C}="ms-wrap" id="ms-cf-region">
+    <button type="button" ${_C}="ms-trigger ${isActive?'active':''}" onclick="toggleMs('cf-region')">
+      <span ${_C}="ms-trigger-label">${label}</span><span>▾</span>
+    </button>
+    <div ${_C}="ms-dropdown" id="ms-drop-cf-region">${optionsHtml}</div>
+  </div>`;
+}
+
+function toggleCityGroup(groupKey) {
+  const grp = document.getElementById('rgn-grp-' + groupKey);
+  const arr = document.getElementById('rgn-arr-' + groupKey);
+  if (!grp) return;
+  const open = grp.style.display !== 'none';
+  grp.style.display = open ? 'none' : 'block';
+  if (arr) arr.style.transform = open ? '' : 'rotate(90deg)';
+}
+
+function buildMsDropdown(id, options, selected) {
+  const sel = Array.isArray(selected) ? selected : (selected ? [selected] : []);
+  const label = sel.length === 0 ? '全部' : sel.length === 1 ? (options.find(([v])=>v===sel[0])?.[1]||sel[0]) : `${sel.length} 項已選`;
+  const isActive = sel.length > 0;
+  return `<div ${_C}="ms-wrap" id="ms-${id}">
+    <button type="button" ${_C}="ms-trigger ${isActive?'active':''}" onclick="toggleMs('${id}')">
+      <span ${_C}="ms-trigger-label">${label}</span><span>▾</span>
+    </button>
+    <div ${_C}="ms-dropdown" id="ms-drop-${id}">
+      <div ${_C}="ms-option ${sel.length===0?'selected':''}" onclick="toggleMsAll('${id}')">
+        <input type="checkbox" ${sel.length===0?'checked':''} readonly> 全部
+      </div>
+      ${options.map(([val,lbl])=>`
+      <div ${_C}="ms-option ${sel.includes(val)?'selected':''}" onclick="toggleMsOpt('${id}','${val.replace(/'/g,"\\'")}')">
+        <input type="checkbox" ${sel.includes(val)?'checked':''} readonly> ${lbl}
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+function toggleMs(id) {
+  document.querySelectorAll('.ms-dropdown.open').forEach(d=>{ if(d.id!=='ms-drop-'+id) d.classList.remove('open'); });
+  document.getElementById('ms-drop-'+id)?.classList.toggle('open');
+}
+function toggleMsAll(id) {
+  const key = id.replace(/^cf-/,'');
+  _CF[key] = Array.isArray(_CF[key]) ? [] : '';
+  refreshCustList(id);
+}
+function toggleMsOpt(id, val) {
+  const key = id.replace(/^cf-/,'');
+  if (!Array.isArray(_CF[key])) _CF[key] = [];
+  const idx = _CF[key].indexOf(val);
+  if (idx >= 0) _CF[key].splice(idx,1);
+  else _CF[key].push(val);
+  refreshCustList(id);
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.ms-wrap') && !e.target.closest('.ms-dropdown'))
+    document.querySelectorAll('.ms-dropdown.open').forEach(d=>d.classList.remove('open'));
+});
+
 function clearCustFilters() {
-  Object.keys(_CF).forEach(k => { if (k !== 'showAdvanced') _CF[k] = ''; });
+  Object.keys(_CF).forEach(k => {
+    if (k === 'showAdvanced' || k === '_showAdv') return;
+    _CF[k] = Array.isArray(_CF[k]) ? [] : '';
+  });
   refreshCustList();
 }
 
@@ -2866,7 +3173,7 @@ function openLogForm(custId, logId) {
       c.logs.push(logData);
       toast('✅ 聯繫紀錄已新增');
     }
-    sbUpdateCustLogs(custId, c.logs).catch(e => toast('⚠ 同步失敗：' + e.message));
+    sbUpdateCustLogs(custId, c.logs).catch(()=>{});
     refreshViewModal(custId);
     renderPage(currentPage);
     return true;
@@ -3336,7 +3643,7 @@ function saveCustomer(id, overwriteDupId) {
       hideLoadingOverlay();
       toast('✅ 客戶資料已更新');
       setTimeout(() => showCustomerViewModal(DB.customers.find(c=>c.id===id)), 100);
-    }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); });
+    }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 儲存失敗：'+e.message); });
     return true;
   }
 
@@ -3361,7 +3668,7 @@ function saveCustomer(id, overwriteDupId) {
     hideLoadingOverlay();
     toast('✅ 新增客戶成功');
     refreshCustList();
-  }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); });
+  }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 儲存失敗：'+e.message); });
   return true;
 }
 
@@ -3436,7 +3743,7 @@ function dupReplaceOld(dupId) {
     hideLoadingOverlay();
     toast('✅ 已移除舊資料，新增客戶成功');
     renderPage(currentPage);
-  }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); renderPage(currentPage); });
+  }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 儲存失敗：'+e.message); renderPage(currentPage); });
 }
 
 
@@ -3850,7 +4157,7 @@ function openPartLogForm(partId, logId) {
       p.logs.push(logData);
       toast('✅ 聯繫紀錄已新增');
     }
-    sbUpdatePartLogs(partId, p.logs).catch(e => toast('⚠ 同步失敗：' + e.message));
+    sbUpdatePartLogs(partId, p.logs).catch(()=>{});
     refreshPartModal(partId);
     return true;
   });
@@ -4307,7 +4614,7 @@ function savePartner(id) {
       hideLoadingOverlay();
       toast('✅ 窗口資料已更新');
       setTimeout(() => showPartnerViewModal(DB.partners.find(p=>p.id===id)), 100);
-    }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); });
+    }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 儲存失敗：'+e.message); });
   } else {
     DB.partners.push(obj);
     showLoadingOverlay('儲存中…');
@@ -4315,7 +4622,7 @@ function savePartner(id) {
       hideLoadingOverlay();
       toast('✅ 新增窗口成功');
       refreshPartList();
-    }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); });
+    }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 儲存失敗：'+e.message); });
   }
   return true;
 }
@@ -5222,14 +5529,14 @@ function doSaveVendor(id, nameZh, nameEn) {
     showLoadingOverlay('儲存中…');
     sbSaveVendor(obj, true).then(() => {
       hideLoadingOverlay(); toast('✅ 原廠資料已更新');
-    }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); });
+    }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 儲存失敗：'+e.message); });
   } else {
     DB_VENDORS.list.push(obj);
     showLoadingOverlay('儲存中…');
     sbSaveVendor(obj, false).then(() => {
       vendorDetailId = obj.id;
       hideLoadingOverlay(); toast('✅ 新增原廠成功');
-    }).catch(e => { hideLoadingOverlay(); toast('❌ 儲存失敗：' + e.message); });
+    }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 儲存失敗：'+e.message); });
   }
   return true;
 }
@@ -5413,14 +5720,16 @@ function saveProduct(vendorId, idx) {
 }
 
 function deleteProduct(vendorId, idx) {
-  if (!confirm('確定刪除此產品項目？')) return;
   const v = DB_VENDORS.list.find(x=>x.id===vendorId);
-  if (!v) return;
-  v.products.splice(idx,1);
-  v.cats = [...new Set(v.products.map(p=>p.cat).filter(Boolean))];
-  sbSaveVendor(v, true).then(() => toast('✅ 已刪除'))
-    .catch(e => toast('❌ 刪除失敗：' + e.message));
-  renderProducts();
+  const prodName = v?.products[idx]?.productName || '此產品';
+  confirmDelete(`刪除產品「${prodName}」`, () => {
+    if (!v) return;
+    v.products.splice(idx,1);
+    v.cats = [...new Set(v.products.map(p=>p.cat).filter(Boolean))];
+    sbSaveVendor(v, true).then(() => toast('✅ 已刪除'))
+      .catch(e => toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 刪除失敗：'+e.message));
+    renderProducts();
+  });
 }
 
 function confirmDelete(msg, onConfirm) {
@@ -5454,7 +5763,7 @@ function deleteCustomer(id) {
       hideLoadingOverlay();
       toast('✅ 客戶已刪除');
       refreshCustList();
-    }).catch(e => { hideLoadingOverlay(); toast('❌ 刪除失敗：' + e.message); });
+    }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 刪除失敗：'+e.message); });
   });
 }
 
@@ -5469,7 +5778,7 @@ function deletePartner(id) {
       hideLoadingOverlay();
       toast('✅ 窗口已刪除');
       refreshPartList();
-    }).catch(e => { hideLoadingOverlay(); toast('❌ 刪除失敗：' + e.message); });
+    }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 刪除失敗：'+e.message); });
   });
 }
 
@@ -5485,7 +5794,7 @@ function deleteVendor(id) {
       hideLoadingOverlay();
       toast('✅ 原廠已刪除');
       renderProducts();
-    }).catch(e => { hideLoadingOverlay(); toast('❌ 刪除失敗：' + e.message); });
+    }).catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 刪除失敗：'+e.message); });
   });
 }
 function toggleAudChip(lbl) {
@@ -5757,7 +6066,7 @@ function executeCustImport() {
     showLoadingOverlay('匯入中…');
     Promise.all(toAdd.map(cc => sbSaveCust(cc, false)))
       .then(() => { hideLoadingOverlay(); toast('✅ 匯入完成：新增 ' + added + ' 筆，略過重複 ' + skipped + ' 筆'); })
-      .catch(e => { hideLoadingOverlay(); toast('❌ 匯入失敗：' + e.message); });
+      .catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 匯入失敗：'+e.message); });
   }
   return true;
 }
@@ -5877,7 +6186,7 @@ function executePartImport() {
     showLoadingOverlay('匯入中…');
     Promise.all(toAdd.map(pp => sbSavePart(pp, false)))
       .then(() => { hideLoadingOverlay(); toast('✅ 匯入完成：新增 ' + added + ' 筆，略過重複 ' + skipped + ' 筆'); })
-      .catch(e => { hideLoadingOverlay(); toast('❌ 匯入失敗：' + e.message); });
+      .catch(e => { hideLoadingOverlay(); toast((e.message.includes('本機')||e.message.includes('網路'))?'⚠ '+e.message:'❌ 匯入失敗：'+e.message); });
   }
   return true;
 }
@@ -5951,6 +6260,197 @@ function togglePw() {
   if (eye) eye.textContent = inp.type === 'password' ? '👁' : '🙈';
 }
 
+
+// ══════════════════════════════════════════════
+//  SCHEDULE MODULE
+// ══════════════════════════════════════════════
+const SCH = {
+  events: JSON.parse(localStorage.getItem('bizcrm_sch') || '[]'),
+  year: new Date().getFullYear(),
+  month: new Date().getMonth(),
+};
+
+function schSave() {
+  localStorage.setItem('bizcrm_sch', JSON.stringify(SCH.events));
+}
+
+function renderSchedule() {
+  const el = document.getElementById('page-schedule');
+  if (!el) return;
+  const mNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  el.innerHTML = `
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">業務行程</div>
+      <div class="topbar-sub">預約安排・拖曳調整・勾選完成</div>
+    </div>
+    <div class="sch-nav">
+      <button onclick="schPrev()">‹</button>
+      <h2>${SCH.year}年 ${mNames[SCH.month]}</h2>
+      <button onclick="schNext()">›</button>
+      <button onclick="schToday()">今日</button>
+    </div>
+  </div>
+  <div class="content" style="padding:16px 20px;">
+    <div class="sch-cal" id="sch-cal"></div>
+  </div>`;
+  renderSchCal();
+}
+
+function renderSchCal() {
+  const cal = document.getElementById('sch-cal');
+  if (!cal) return;
+  const dows = ['一','二','三','四','五','六','日'];
+  let html = dows.map(d => `<div class="sch-dow">${d}</div>`).join('');
+  const y = SCH.year, m = SCH.month;
+  const firstDay = new Date(y, m, 1);
+  let startDow = firstDay.getDay();
+  startDow = startDow === 0 ? 6 : startDow - 1;
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const daysInPrev = new Date(y, m, 0).getDate();
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  for (let i = startDow-1; i >= 0; i--) {
+    const d = daysInPrev - i;
+    const mm = String(m).padStart(2,'0');
+    html += schDayHtml(`${y}-${mm}-${String(d).padStart(2,'0')}`, d, true, false);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    html += schDayHtml(dateStr, d, false, dateStr === todayStr);
+  }
+  const total = startDow + daysInMonth;
+  const remaining = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let d = 1; d <= remaining; d++) {
+    const mm = String(m+2).padStart(2,'0');
+    html += schDayHtml(`${y}-${mm}-${String(d).padStart(2,'0')}`, d, true, false);
+  }
+  cal.innerHTML = html;
+  cal.querySelectorAll('.sch-day').forEach(cell => {
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('sch-drag-over'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('sch-drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault(); cell.classList.remove('sch-drag-over');
+      const evId = parseInt(e.dataTransfer.getData('text/plain'));
+      const newDate = cell.dataset.date;
+      const ev = SCH.events.find(x => x.id === evId);
+      if (ev && newDate) { ev.date = newDate; schSave(); renderSchCal(); }
+    });
+  });
+  cal.querySelectorAll('.sch-event[draggable]').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', el.dataset.id);
+      setTimeout(() => { if(el) el.style.opacity = '0.4'; }, 0);
+    });
+    el.addEventListener('dragend', () => { if(el) el.style.opacity = ''; });
+  });
+}
+
+function schDayHtml(dateStr, dayNum, isOther, isToday) {
+  const evs = SCH.events.filter(e => e.date === dateStr).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+  const cls = isOther ? 'sch-other' : isToday ? 'sch-today' : '';
+  const numHtml = isToday
+    ? `<span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px">${dayNum}</span>`
+    : `<span style="font-size:11px;font-weight:700;color:var(--text3)">${dayNum}</span>`;
+  const evHtml = evs.map(ev => {
+    const typeCls = ev.type==='cust'?'type-cust':ev.type==='part'?'type-part':'type-admin';
+    const doneCls = ev.done ? 'done' : '';
+    const timeStr = ev.time ? `<div class="sch-event-time">${ev.time}</div>` : '';
+    return `<div class="sch-event ${typeCls} ${doneCls}" draggable="true" data-id="${ev.id}" title="${ev.label}">
+      <input type="checkbox" class="sch-event-check" ${ev.done?'checked':''} onclick="schToggleDone(${ev.id},event)">
+      <div class="sch-event-body">${timeStr}<div class="sch-event-label">${ev.label}</div></div>
+      <button class="sch-event-del" onclick="schDelete(${ev.id},event)">✕</button>
+    </div>`;
+  }).join('');
+  return `<div class="sch-day ${cls}" data-date="${dateStr}">
+    <div class="sch-day-num" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+      ${numHtml}
+      <span class="sch-add-btn" onclick="schOpenForm('${dateStr}')">＋</span>
+    </div>
+    ${evHtml}
+  </div>`;
+}
+
+function schPrev() { SCH.month--; if(SCH.month<0){SCH.month=11;SCH.year--;} renderSchedule(); }
+function schNext() { SCH.month++; if(SCH.month>11){SCH.month=0;SCH.year++;} renderSchedule(); }
+function schToday() { const n=new Date(); SCH.year=n.getFullYear(); SCH.month=n.getMonth(); renderSchedule(); }
+function schToggleDone(id, e) {
+  e.stopPropagation();
+  const ev = SCH.events.find(x=>x.id===id);
+  if (ev) { ev.done = !ev.done; schSave(); renderSchCal(); }
+}
+function schDelete(id, e) {
+  e.stopPropagation();
+  SCH.events = SCH.events.filter(x=>x.id!==id);
+  schSave(); renderSchCal();
+}
+function schOpenForm(dateStr, editId) {
+  const existing = editId ? SCH.events.find(x=>x.id===editId) : null;
+  const custOpts = DB.customers.map(c=>`<option value="cust:${c.id}" ${existing?.ref==='cust:'+c.id?'selected':''}>${c.company}</option>`).join('');
+  const partOpts = DB.partners.map(p=>`<option value="part:${p.id}" ${existing?.ref==='part:'+p.id?'selected':''}>${p.company||p.companyEn}</option>`).join('');
+  const initType = existing?.type || 'admin';
+  openModal('schModal', existing?'編輯行程':'新增行程', `
+    <div class="form-grid">
+      <div class="form-group"><label>日期</label>
+        <input id="sch-date" type="date" class="form-control" value="${existing?.date||dateStr}">
+      </div>
+      <div class="form-group"><label>時間</label>
+        <input id="sch-time" type="time" class="form-control" value="${existing?.time||''}">
+      </div>
+      <div class="form-group form-full"><label>類型</label>
+        <select id="sch-type" class="form-control" onchange="schTypeChange()">
+          <option value="admin" ${initType==='admin'?'selected':''}>📋 日常行政</option>
+          <option value="cust"  ${initType==='cust'?'selected':''}>🏢 客戶拜訪</option>
+          <option value="part"  ${initType==='part'?'selected':''}>🤝 合作窗口</option>
+        </select>
+      </div>
+      <div class="form-group form-full" id="sch-ref-wrap" style="${initType==='admin'?'display:none':''}">
+        <label id="sch-ref-label">${initType==='part'?'選擇合作窗口':'選擇客戶'}</label>
+        <select id="sch-ref" class="form-control">
+          <option value="">請選擇</option>
+          <optgroup label="客戶"   id="sch-cust-grp" ${initType==='part'?'style="display:none"':''}>${custOpts}</optgroup>
+          <optgroup label="合作窗口" id="sch-part-grp" ${initType==='cust'?'style="display:none"':''}>${partOpts}</optgroup>
+        </select>
+      </div>
+      <div class="form-group form-full"><label>標題 *</label>
+        <input id="sch-label" class="form-control" placeholder="行程標題…" value="${existing?.label||''}">
+      </div>
+      <div class="form-group form-full"><label>備註</label>
+        <textarea id="sch-content" class="form-control" rows="3" placeholder="行程內容或備註…">${existing?.content||''}</textarea>
+      </div>
+    </div>
+  `, () => schSaveForm(editId));
+}
+function schTypeChange() {
+  const type = document.getElementById('sch-type')?.value;
+  const wrap = document.getElementById('sch-ref-wrap');
+  const custGrp = document.getElementById('sch-cust-grp');
+  const partGrp = document.getElementById('sch-part-grp');
+  const lbl = document.getElementById('sch-ref-label');
+  if (!wrap) return;
+  wrap.style.display = type==='admin' ? 'none' : '';
+  if (custGrp) custGrp.style.display = type==='part' ? 'none' : '';
+  if (partGrp) partGrp.style.display = type==='cust' ? 'none' : '';
+  if (lbl) lbl.textContent = type==='part' ? '選擇合作窗口' : '選擇客戶';
+}
+function schSaveForm(editId) {
+  const date    = document.getElementById('sch-date')?.value;
+  const time    = document.getElementById('sch-time')?.value || '';
+  const type    = document.getElementById('sch-type')?.value || 'admin';
+  const ref     = document.getElementById('sch-ref')?.value || '';
+  const label   = document.getElementById('sch-label')?.value.trim() || '';
+  const content = document.getElementById('sch-content')?.value.trim() || '';
+  if (!date)  { toast('⚠ 請選擇日期'); return false; }
+  if (!label) { toast('⚠ 請填寫標題'); return false; }
+  if (editId) {
+    const ev = SCH.events.find(x=>x.id===editId);
+    if (ev) Object.assign(ev, {date,time,type,ref,label,content});
+  } else {
+    SCH.events.push({ id: Date.now(), date, time, type, ref, label, content, done: false });
+  }
+  schSave(); renderSchCal();
+  return true;
+}
 
 // Check if already authenticated this session
 if (sessionStorage.getItem('crm_auth') === 'ok') {
