@@ -1320,6 +1320,46 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 
+
+/* ══ DATE RANGE PICKER ══ */
+.drp-wrap { position:relative; display:inline-block; }
+.drp-input {
+  display:flex; align-items:center; gap:8px; padding:7px 14px;
+  border:2px solid var(--border2); border-radius:50px; cursor:pointer;
+  background:var(--surface); font-size:13px; font-weight:700; color:var(--text);
+  box-shadow:2px 2px 0 #E8C060; white-space:nowrap; user-select:none;
+}
+.drp-input:hover { border-color:var(--accent); }
+.drp-cal-pop {
+  display:none; position:absolute; top:calc(100% + 6px); left:0; z-index:600;
+  background:var(--surface); border:2px solid #2C1A0E; border-radius:16px;
+  box-shadow:6px 6px 0 rgba(0,0,0,0.12); padding:16px; min-width:280px;
+}
+.drp-cal-pop.open { display:block; }
+.drp-months { display:flex; gap:20px; }
+.drp-month { flex:1; min-width:220px; }
+.drp-month-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.drp-month-title { font-size:14px; font-weight:800; color:var(--text); }
+.drp-nav-btn { background:none; border:none; cursor:pointer; font-size:16px; color:var(--text2); padding:2px 6px; border-radius:6px; }
+.drp-nav-btn:hover { background:var(--surface2); }
+.drp-dow-row { display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:4px; }
+.drp-dow-cell { text-align:center; font-size:11px; font-weight:700; color:var(--text3); padding:4px 0; }
+.drp-day-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:1px; }
+.drp-day {
+  text-align:center; padding:6px 2px; font-size:12px; font-weight:600;
+  cursor:pointer; border-radius:6px; color:var(--text2); position:relative;
+}
+.drp-day:hover { background:var(--accent-glow); color:var(--accent); }
+.drp-day.other-month { color:var(--text3); opacity:0.4; }
+.drp-day.in-range { background:rgba(255,107,53,0.12); border-radius:0; }
+.drp-day.range-start, .drp-day.range-end { background:var(--accent); color:#fff; border-radius:6px; }
+.drp-day.range-start { border-radius:6px 0 0 6px; }
+.drp-day.range-end { border-radius:0 6px 6px 0; }
+.drp-day.range-start.range-end { border-radius:6px; }
+.drp-day.today { font-weight:800; color:var(--accent); }
+.drp-day.today::after { content:''; position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:4px; height:4px; background:var(--accent); border-radius:50%; }
+.drp-foot { display:flex; justify-content:flex-end; gap:8px; margin-top:12px; padding-top:10px; border-top:1px solid var(--border); }
+/* ══ END DRP ══ */
 /* ══ SCHEDULE MODULE ══ */
 .sch-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; border: 2px solid #2C1A0E; border-radius: 14px; overflow: hidden; }
 .sch-dow { background: var(--accent); color: #fff; font-size: 11px; font-weight: 800; text-align: center; padding: 8px 4px; border-bottom: 2px solid #2C1A0E; }
@@ -1335,10 +1375,11 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .sch-day:hover .sch-add-btn { opacity: 1; }
 .sch-event { border-radius: 6px; padding: 3px 6px; margin-bottom: 3px; font-size: 11px; font-weight: 600; cursor: grab; display: flex; align-items: flex-start; gap: 4px; border: 1.5px solid transparent; transition: opacity 0.15s; user-select: none; position: relative; }
 .sch-event:active { cursor: grabbing; opacity: 0.7; }
-.sch-event.done { opacity: 0.45; text-decoration: line-through; }
-.sch-event.type-cust { background: #E8F5E9; border-color: #81C784; color: #1B5E20; }
-.sch-event.type-part { background: #E3F2FD; border-color: #64B5F6; color: #0D47A1; }
-.sch-event.type-admin { background: #FFF3E0; border-color: #FFB74D; color: #BF360C; }
+.sch-event.done {}
+.sch-event.type-cust  { background: #FFE8E8; border-color: #F4A0A0; color: #8B0000; }
+.sch-event.type-part  { background: #E8F0FF; border-color: #90B4F0; color: #0D2F7A; }
+.sch-event.type-dev   { background: #E8F5E9; border-color: #81C784; color: #1B5E20; }
+.sch-event.type-other { background: #FFFDE7; border-color: #FFD54F; color: #7A5800; }
 .sch-event-check { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; accent-color: var(--accent); cursor: pointer; }
 .sch-event-body { flex: 1; min-width: 0; }
 .sch-event-time { font-size: 10px; opacity: 0.7; }
@@ -1539,7 +1580,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         登出
       </button>
-      <div style="text-align:center;margin-top:8px;font-size:10px;color:#A5D6A7;letter-spacing:0.05em;">v 20260709_1215</div>
+      <div style="text-align:center;margin-top:8px;font-size:10px;color:#A5D6A7;letter-spacing:0.05em;">v 20260715_1613</div>
     </div>
   </div>
 </nav>
@@ -1628,7 +1669,7 @@ function custToRow(obj) {
     level: obj.level||'L1',
     blocked: !!obj.blocked,
     listed: !!obj.listed,
-    owner: obj.owner||'',
+    owner: (obj.owner === '無' ? '' : obj.owner)||'',
     source: obj.source||'',
     source_note: obj.sourceNote||'',
     si: obj.si||'',
@@ -2427,12 +2468,12 @@ let custDetailId = null;
 let custPage = 0; // current page index (0-based)
 const CUST_PAGE_SIZE = 20;
 
-// Search filter state
+// Search filter state - owner default set after login via updateSidebarUser
 const _CF = {
   keyword: '',
   industry: [],
   level: ['L1','L2','L3','L4','L5'],
-  owner: ['無','Iris'],
+  owner: [],
   source: [],
   si: [],
   pcscale: [],
@@ -2755,30 +2796,42 @@ function renderCustList() {
       <thead><tr>
         <th>公司名稱</th>
         <th>聯繫人</th>
+        <th>電話</th>
+        <th>分機</th>
+        <th class="sort-th" onclick="cycleSortCol('logs')">聯繫紀錄${sortIcon('logs')}</th>
         <th class="sort-th" onclick="cycleSortCol('level')">等級${sortIcon('level')}</th>
         <th class="sort-th" onclick="cycleSortCol('industry')">產業${sortIcon('industry')}</th>
         <th class="sort-th" onclick="cycleSortCol('region')">地區${sortIcon('region')}</th>
-        <th class="sort-th" onclick="cycleSortCol('logs')">聯繫紀錄${sortIcon('logs')}</th>
       </tr></thead>
       <tbody>
         ${pageList.map(c => {
-          const primary = c.contacts?.find(ct => ct.primary) || c.contacts?.[0];
-          const hasContact = primary?.name && primary.name !== '尚無';
+          const primaryList = (c.contacts||[]).filter(ct=>ct.primary && ct.name && ct.name!=='尚無');
+          const primary = primaryList[0] || c.contacts?.[0];
+          const hasContact = primaryList.length > 0;
+          const phone = primary?.phone || c.phone || '';
           return `
           <tr class="tr-clickable" onclick="openCustomerDetail(${c.id})">
             <td style="max-width:140px;">
               <div style="display:flex;align-items:center;gap:5px;">
-                <strong style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${c.company}">${trunc(c.company,15)}</strong>
+                <strong style="display:inline-block;max-width:10em;word-break:break-all;line-height:1.4;" title="${c.company}">${c.company}</strong>
                 ${c.listed ? '<span class="listed-badge">上市</span>' : ''}
                 ${c.level==='L1'&&c.blocked ? '<span class="tag" style="color:var(--red);font-size:10px;">擋</span>' : ''}
                 ${custHasTracking(c) ? '<span style="font-size:11px;" title="有待追蹤">📌</span>' : ''}
               </div>
             </td>
-            <td>${hasContact ? `<span title="${primary.name}">${trunc(primary.name,4)}</span>` : '<span style="color:var(--text3);font-size:11px;">尚無</span>'}</td>
+            <td>${hasContact
+              ? primaryList.map(ct=>`<div style="max-width:5em;word-break:break-all;line-height:1.6;padding:1px 0">${ct.name}</div>`).join('')
+              : '<span style="color:var(--text3);font-size:11px;">尚無</span>'}</td>
+            <td style="font-size:12px;color:var(--text2);white-space:nowrap">${hasContact
+              ? primaryList.map((ct,ci)=>`<div style="line-height:1.6;padding:1px 0">${ci===0?(c.phone||ct.phone||'<span style=\'color:var(--text3)\'>-</span>'):''}&nbsp;</div>`).join('')
+              : (c.phone||'<span style="color:var(--text3)">-</span>')}</td>
+            <td style="font-size:12px;color:var(--text2);white-space:nowrap">${hasContact
+              ? primaryList.map(ct=>`<div style="line-height:1.6;padding:1px 0">${ct.ext?'#'+ct.ext:'<span style="color:var(--text3)">-</span>'}</div>`).join('')
+              : '<span style="color:var(--text3)">-</span>'}</td>
+            <td>${c.logs.length > 0 ? `<span class="log-count-badge">${c.logs.length}</span>` : '<span style="color:var(--text3);font-size:12px">-</span>'}</td>
             <td><span class="badge badge-${c.level.toLowerCase()}" style="letter-spacing:0.03em">${c.level}</span></td>
             <td><span style="font-size:12px">${industryLabel[c.industry]||'-'}</span></td>
             <td style="font-size:12px;color:var(--text2)">${getRegion(c)||'<span style=\"color:var(--text3)\">-</span>'}</td>
-            <td>${c.logs.length > 0 ? `<span class="log-count-badge">${c.logs.length}</span>` : '<span style="color:var(--text3);font-size:12px">-</span>'}</td>
           </tr>`;
         }).join('')}
       </tbody>
@@ -3239,7 +3292,7 @@ function showCustomerForm(c) {
   const isCorpInit = t.industry === 'corp';
   const stdOwners = ['無','Sara','Amber','Iris','大世科','其它'];
   const isCustomOwner = t.owner && !stdOwners.includes(t.owner);
-  const ownerVal = isCustomOwner ? '其它' : (t.owner||'無');
+  const ownerVal = isCustomOwner ? '其它' : (t.owner||'' ? t.owner : '無');
   const ownerCustomVal = isCustomOwner ? t.owner : (t.ownerCustom||'');
   const showSourceNote = t.source === '內部提供' || t.source === '協力廠商';
 
@@ -3371,12 +3424,12 @@ function buildContactRow(ct, i, isPrimary) {
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;">聯繫人 ${i+1}</span>
-        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;" title="設為主要聯繫人">
-          <input type="radio" name="ct-primary" class="ct-primary" value="${i}"
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;" title="勾選後此聯繫人顯示於客戶列表">
+          <input type="checkbox" class="ct-primary" value="${i}"
             ${isPrimary?'checked':''}
             onchange="onPrimaryChange(${i})"
             style="accent-color:var(--accent);width:14px;height:14px;">
-          <span style="font-size:11px;font-weight:600;color:${isPrimary?'var(--accent)':'var(--text3)'};" id="ct-primary-lbl-${i}">主要聯繫人</span>
+          <span style="font-size:11px;font-weight:600;color:${isPrimary?'var(--accent)':'var(--text3)'};" id="ct-primary-lbl-${i}">顯示於列表</span>
         </label>
       </div>
       ${i > 0 ? `<button type="button" class="contact-row-del" onclick="removeContactRow(${i})" title="刪除此聯繫人">✕</button>` : ''}
@@ -3405,7 +3458,8 @@ function onPrimaryChange(idx) {
   const wrap = document.getElementById('cf-contacts-wrap');
   if (!wrap) return;
   wrap.querySelectorAll('.contact-row').forEach((row, i) => {
-    const isPri = (i === idx);
+    const cb = row.querySelector('.ct-primary');
+    const isPri = cb?.checked || false;
     row.style.borderColor = isPri ? 'var(--accent)' : 'var(--border)';
     row.style.background   = isPri ? 'var(--accent-glow)' : 'var(--surface2)';
     const lbl = document.getElementById('ct-primary-lbl-'+i);
@@ -3433,8 +3487,8 @@ function removeContactRow(i) {
     r.id = 'ct-row-'+idx;
     const lbl = r.querySelector('span[id^="ct-primary-lbl-"]');
     if (lbl) lbl.id = 'ct-primary-lbl-'+idx;
-    const radio = r.querySelector('.ct-primary');
-    if (radio) { radio.value = idx; radio.setAttribute('onchange',`onPrimaryChange(${idx})`); }
+    const cb = r.querySelector('.ct-primary');
+    if (cb) { cb.value = idx; cb.setAttribute('onchange',`onPrimaryChange(${idx})`); }
     const hdlbl = r.querySelector('span[style*="font-size:11px;font-weight:700"]');
     if (hdlbl) hdlbl.textContent = `聯繫人 ${idx+1}`;
     const delBtn = r.querySelector('.contact-row-del');
@@ -3445,8 +3499,11 @@ function removeContactRow(i) {
   });
   // If removed row was primary, assign primary to first
   if (wasPrimary) {
-    const firstRadio = wrap.querySelector('.ct-primary');
-    if (firstRadio) { firstRadio.checked = true; onPrimaryChange(0); }
+    // checkbox: if no primary left, check first
+    if (!wrap.querySelector('.ct-primary:checked')) {
+      const firstCb = wrap.querySelector('.ct-primary');
+      if (firstCb) { firstCb.checked = true; onPrimaryChange(0); }
+    }
   }
 }
 
@@ -3464,7 +3521,7 @@ function getContactsFromForm() {
     const prim = row.querySelector('.ct-primary')?.checked || false;
     result.push({ name: name || '尚無', dept, ext, mail, job, primary: prim });
   });
-  // ensure at least one primary
+  // if none selected, default first as shown in list
   if (result.length && !result.some(r => r.primary)) result[0].primary = true;
   return result.length ? result : [{name:'尚無',dept:'',ext:'',mail:'',job:'',primary:true}];
 }
@@ -3610,7 +3667,7 @@ function saveCustomer(id, overwriteDupId) {
 
   const ownerSel = document.getElementById('cf-owner').value;
   const ownerCustom = document.getElementById('cf-owner-custom')?.value.trim() || '';
-  const ownerFinal = ownerSel === '其它' ? (ownerCustom || '其它') : ownerSel;
+  const ownerFinal = ownerSel === '其它' ? (ownerCustom || '其它') : (ownerSel === '無' ? '' : ownerSel);
 
   const obj = {
     id: id || DB.nextCustId++,
@@ -3714,6 +3771,9 @@ function showDupTaxidModal(dup, newObj) {
               <div style="font-size:11px;opacity:0.8">刪除「${dup.company}」，以目前填寫的「${newObj.company}」取代</div>
             </div>
           </button>
+        </div>
+        <div style="text-align:right;margin-top:12px">
+          <button onclick="document.getElementById('dup-taxid-overlay').remove()" class="btn btn-ghost btn-sm">✕ 取消，不儲存</button>
         </div>
       </div>
     </div>`;
@@ -4171,6 +4231,95 @@ function renderPartDetail() {
   return renderPartList();
 }
 
+// ── 名片掃描 ──
+function scanBusinessCard(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const status = document.getElementById('card-scan-status');
+  if (status) status.textContent = '解析中…';
+
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const base64 = e.target.result.split(',')[1];
+    const mediaType = file.type || 'image/jpeg';
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+              { type: 'text', text: `請解析這張名片，回傳 JSON 格式（只回傳 JSON，不要其他文字）：
+{
+  "company": "公司中文名稱",
+  "companyEn": "公司英文名稱",
+  "name": "聯繫人姓名",
+  "dept": "部門職稱",
+  "phone": "電話（辦公室）",
+  "mobile": "手機",
+  "email": "Email",
+  "ext": "分機（若有）",
+  "job": "職稱"
+}
+若欄位不存在填空字串。` }
+            ]
+          }]
+        })
+      });
+      const data = await res.json();
+      const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+      let parsed;
+      try {
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        parsed = JSON.parse(jsonMatch?.[0] || text);
+      } catch { throw new Error('無法解析回傳格式'); }
+
+      // Fill in form fields
+      if (parsed.company) {
+        const zhInput = document.getElementById('pf-nameZh') || document.getElementById('pf-companyZh');
+        const sel = document.querySelector('#pf-company-wrap select');
+        const inp = document.querySelector('#pf-company-wrap input');
+        if (sel) sel.value = parsed.company;
+        else if (inp) inp.value = parsed.company;
+        else {
+          const wrap = document.getElementById('pf-company-wrap');
+          if (wrap) { const i = wrap.querySelector('input'); if(i) i.value = parsed.company; }
+        }
+      }
+      if (parsed.companyEn) {
+        const en = document.getElementById('pf-companyEn');
+        if (en) en.value = parsed.companyEn;
+      }
+
+      // Fill first contact row
+      const firstRow = document.getElementById('pf-ct-row-0');
+      if (firstRow) {
+        const f = (cls, val) => { const el = firstRow.querySelector(cls); if(el&&val) el.value = val; };
+        f('.pf-ct-name',  parsed.name);
+        f('.pf-ct-dept',  parsed.dept || parsed.job);
+        f('.pf-ct-phone', parsed.phone || parsed.mobile);
+        f('.pf-ct-mail',  parsed.email);
+        f('.pf-ct-job',   parsed.job);
+        // ext: look for input with placeholder 分機
+        const extInputs = firstRow.querySelectorAll('input');
+        extInputs.forEach(el => { if(el.placeholder && el.placeholder.includes('分機') && parsed.ext) el.value = parsed.ext; });
+      }
+
+      if (status) status.textContent = '✅ 解析完成';
+      toast('✅ 名片解析完成，請確認並補充資料');
+      input.value = '';
+    } catch(err) {
+      if (status) status.textContent = '❌ 解析失敗';
+      toast('❌ 名片解析失敗：' + err.message);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
 function openNewPartner() { showPartnerForm(null); }
 function openEditPartner(id) {
   closePartModal(id);
@@ -4413,25 +4562,37 @@ function showPartnerForm(p) {
   const initVendorId = vendorMatch ? vendorMatch.id : '';
 
   const companyZhField = isVendor
-    ? `<select id="pf-company" class="form-control" onchange="onPartCompanyChange()">
+    ? `<select id="pf-company" class="form-control" style="width:100%;box-sizing:border-box" onchange="onPartCompanyChange()">
         <option value="">請選擇原廠</option>
         ${DB_VENDORS.list.map(v=>`<option value="${v.nameZh||v.nameEn}" data-en="${v.nameEn||''}" data-id="${v.id}" ${vendorMatch?.id===v.id?'selected':''}>${v.nameZh||v.nameEn}</option>`).join('')}
        </select>`
-    : `<input id="pf-company" class="form-control" placeholder="中文名稱" value="${t.company||''}">`;
+    : `<input id="pf-company" class="form-control" style="width:100%;box-sizing:border-box" placeholder="中文名稱" value="${t.company||''}">`;
 
   openModal('partModal', isEdit?`編輯窗口: ${[t.company,t.companyEn].filter(Boolean).join(' / ')}`:'新增合作窗口', `
     <div class="form-grid">
-      <div class="form-group form-full"><label>類別</label>
-        <select id="pf-category" class="form-control" style="max-width:240px" onchange="onPartCatChange()">
-          ${['代理商','原廠','技術支援','同業','顧問','其它'].map(v=>`<option value="${v}" ${t.category===v?'selected':''}>${v}</option>`).join('')}
-        </select>
+      <div style="grid-column:1/-1;display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:8px">
+        <div><label style="display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">類別</label>
+          <select id="pf-category" class="form-control" style="width:160px" onchange="onPartCatChange()">
+            ${['代理商','原廠','技術支援','同業','顧問','其它'].map(v=>`<option value="${v}" ${t.category===v?'selected':''}>${v}</option>`).join('')}
+          </select>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding-bottom:2px">
+          <label class="btn btn-ghost btn-sm" style="cursor:pointer;gap:6px;margin:0">
+            📷 上傳名片
+            <input type="file" accept="image/*" style="display:none" onchange="scanBusinessCard(this)">
+          </label>
+          <span id="card-scan-status" style="font-size:11px;color:var(--text3)"></span>
+        </div>
       </div>
-      <div class="form-group">
-        <label>公司中文名稱</label>
-        <div id="pf-company-wrap">${companyZhField}</div>
-      </div>
-      <div class="form-group"><label>公司英文名稱</label>
-        <input id="pf-companyEn" class="form-control" placeholder="English Name" value="${t.companyEn||vendorMatch?.nameEn||''}">
+      <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">公司中文名稱</label>
+          <div id="pf-company-wrap" style="width:100%">${companyZhField}</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px">公司英文名稱</label>
+          <input id="pf-companyEn" class="form-control" style="width:100%;box-sizing:border-box" placeholder="English Name" value="${t.companyEn||vendorMatch?.nameEn||''}">
+        </div>
       </div>
       <div class="form-full" style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -6229,11 +6390,19 @@ function doLogin() {
   }
 }
 
+function getDefaultOwnerFilter() {
+  const user = sessionStorage.getItem('crm_user') || '';
+  if (!user || user === '系統管理員') return [];
+  return ['無', user];
+}
+
 function updateSidebarUser(name) {
   const nameEl = document.getElementById('sidebar-user-name');
   const initEl = document.getElementById('sidebar-user-initial');
   if (nameEl) nameEl.textContent = name;
   if (initEl) initEl.textContent = name.charAt(0);
+  // Apply default owner filter based on logged-in user
+  _CF.owner = getDefaultOwnerFilter();
 }
 
 function doLogout() {
@@ -6266,6 +6435,8 @@ function togglePw() {
 // ══════════════════════════════════════════════
 const SCH = {
   events: JSON.parse(localStorage.getItem('bizcrm_sch') || '[]'),
+  notes: JSON.parse(localStorage.getItem('bizcrm_sch_notes') || '{}'),
+  filterFrom: '', filterTo: '', searchKw: '', typeFilter: [],
   year: new Date().getFullYear(),
   month: new Date().getMonth(),
 };
@@ -6273,103 +6444,421 @@ const SCH = {
 function schSave() {
   localStorage.setItem('bizcrm_sch', JSON.stringify(SCH.events));
 }
+function schSaveDayNote(dateStr, val) {
+  if (val.trim()) SCH.notes[dateStr] = val;
+  else delete SCH.notes[dateStr];
+  localStorage.setItem('bizcrm_sch_notes', JSON.stringify(SCH.notes));
+}
 
 function renderSchedule() {
   const el = document.getElementById('page-schedule');
   if (!el) return;
-  const mNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  // Default range: prev week Mon to next week Sun
+  if (!SCH.filterFrom || !SCH.filterTo) {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const mon = new Date(today); const d=mon.getDay(); mon.setDate(mon.getDate()-(d===0?6:d-1));
+    const from = new Date(mon); from.setDate(from.getDate()-7);
+    const to   = new Date(mon); to.setDate(to.getDate()+20);
+    SCH.filterFrom = dateToStr(from);
+    SCH.filterTo   = dateToStr(to);
+  }
   el.innerHTML = `
   <div class="topbar">
     <div>
       <div class="topbar-title">業務行程</div>
-      <div class="topbar-sub">預約安排・拖曳調整・勾選完成</div>
+      <div class="topbar-sub">拖曳移動・勾選完成</div>
     </div>
-    <div class="sch-nav">
-      <button onclick="schPrev()">‹</button>
-      <h2>${SCH.year}年 ${mNames[SCH.month]}</h2>
-      <button onclick="schNext()">›</button>
-      <button onclick="schToday()">今日</button>
+    <button class="btn btn-primary" onclick="schOpenForm('${dateToStr(new Date())}')">＋ 新增行程</button>
+  </div>
+  <div style="padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border-bottom:2px solid var(--border)">
+    <!-- Date range picker -->
+    <div class="drp-wrap" id="drp-wrap">
+      <div class="drp-input" onclick="drpToggle()" id="drp-display">
+        <span>📅</span>
+        <span id="drp-label">${schFmtRange(SCH.filterFrom, SCH.filterTo)}</span>
+        <span style="color:var(--text3);font-size:11px">▾</span>
+      </div>
+      <div class="drp-cal-pop" id="drp-pop"></div>
     </div>
+    <button class="btn btn-ghost btn-sm" onclick="schResetRange()">本週±1週</button>
+    <!-- Type filter -->
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      ${[['外部開會','外部會議','#FFE8E8','#8B0000','#F4A0A0'],['內部開會','內部會議','#E8F0FF','#0D2F7A','#90B4F0'],['開發','開發','#E8F5E9','#1B5E20','#81C784'],['其他','其他','#FFFDE7','#7A5800','#FFD54F']].map(([v,l,bg,col,bdr])=>`
+      <label style="display:flex;align-items:center;gap:4px;cursor:pointer;padding:4px 10px;border:1.5px solid ${bdr};border-radius:50px;font-size:11px;font-weight:700;background:${(SCH.typeFilter||[]).length===0||(SCH.typeFilter||[]).includes(v)?bg:'#f5f5f5'};color:${(SCH.typeFilter||[]).length===0||(SCH.typeFilter||[]).includes(v)?col:'#aaa'};transition:all 0.15s">
+        <input type="checkbox" value="${v}" ${(SCH.typeFilter||[]).length===0||(SCH.typeFilter||[]).includes(v)?'checked':''} style="accent-color:${col};width:12px;height:12px" onclick="schTypeFilter(this)"> ${l}
+      </label>`).join('')}
+    </div>
+    <!-- Search -->
+    <div class="search-box" style="flex:1;min-width:180px;max-width:360px">
+      <span>🔍</span>
+      <input id="sch-kw" placeholder="搜尋客戶/窗口、標題、備註…"
+        oninput="SCH.searchKw=this.value;renderSchCal();"
+        oncompositionend="SCH.searchKw=this.value;renderSchCal();"
+        value="${SCH.searchKw||''}">
+    </div>
+    ${SCH.searchKw ? '<button class="btn btn-ghost btn-sm" onclick="SCH.searchKw=\'\';document.getElementById(\'sch-kw\').value=\'\';renderSchCal()">✕ 清除</button>' : ''}
   </div>
   <div class="content" style="padding:16px 20px;">
-    <div class="sch-cal" id="sch-cal"></div>
+    <div id="sch-cal"></div>
   </div>`;
+  renderSchCal();
+}
+
+
+// ══ DATE RANGE PICKER ══
+const DRP = { picking:false, hoverDate:null, curYear:0, curMonth:0 };
+
+function drpInit() {
+  const today = new Date();
+  DRP.curYear  = today.getFullYear();
+  DRP.curMonth = today.getMonth();
+}
+
+function drpToggle() {
+  const pop = document.getElementById('drp-pop');
+  if (!pop) return;
+  if (!pop.classList.contains('open')) {
+    DRP.picking = false; DRP.hoverDate = null; drpInit();
+    drpRender();
+    pop.classList.add('open');
+    setTimeout(() => document.addEventListener('click', drpOutsideClick), 10);
+  } else {
+    pop.classList.remove('open');
+    document.removeEventListener('click', drpOutsideClick);
+  }
+}
+
+function drpOutsideClick(e) {
+  if (!e.target.closest('#drp-wrap')) {
+    document.getElementById('drp-pop')?.classList.remove('open');
+    document.removeEventListener('click', drpOutsideClick);
+  }
+}
+
+function drpRender() {
+  const pop = document.getElementById('drp-pop');
+  if (!pop) return;
+  const y = DRP.curYear, m = DRP.curMonth;
+  const mNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  pop.innerHTML = `
+    <div class="drp-months">
+      <div class="drp-month">
+        <div class="drp-month-head">
+          <button class="drp-nav-btn" onclick="drpPrev()">&lt;</button>
+          <span class="drp-month-title">${y}年 ${mNames[m]}</span>
+          <button class="drp-nav-btn" onclick="drpNext()">&gt;</button>
+        </div>
+        ${drpMonthGrid(y, m)}
+      </div>
+    </div>
+    <div class="drp-foot">
+      <button class="btn btn-ghost btn-sm" onclick="drpClear()">清除</button>
+      <button class="btn btn-primary btn-sm" onclick="drpConfirm()">確認</button>
+    </div>`;
+}
+
+function drpMonthGrid(y, m) {
+  const dowLabels = ['一','二','三','四','五','六','日'];
+  let html = '<div class="drp-dow-row">' + dowLabels.map(d=>`<div class="drp-dow-cell">${d}</div>`).join('') + '</div>';
+  html += '<div class="drp-day-grid">';
+  const first = new Date(y,m,1);
+  let startDow = first.getDay(); startDow = startDow===0?6:startDow-1;
+  const daysInPrev = new Date(y,m,0).getDate();
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const today = dateToStr(new Date());
+  const from = SCH.filterFrom, to = SCH.filterTo;
+  const hover = DRP.hoverDate;
+
+  const effectiveTo = DRP.picking && hover ? (hover < from ? from : hover) : to;
+  const effectiveFrom = DRP.picking && hover && hover < from ? hover : from;
+
+  for (let i=startDow-1; i>=0; i--) {
+    const d = daysInPrev - i;
+    const ds = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    html += `<div class="drp-day other-month">${d}</div>`;
+  }
+  for (let d=1; d<=daysInMonth; d++) {
+    const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    let cls = 'drp-day';
+    if (ds === today) cls += ' today';
+    if (ds === effectiveFrom) cls += ' range-start';
+    if (ds === effectiveTo)   cls += ' range-end';
+    if (effectiveFrom && effectiveTo && ds > effectiveFrom && ds < effectiveTo) cls += ' in-range';
+    html += `<div class="${cls}" onmousedown="drpPickDay('${ds}')" onmouseenter="drpHover('${ds}')" onmouseup="drpMouseUp('${ds}')">${d}</div>`;
+  }
+  const total = startDow + daysInMonth;
+  const rem = total%7===0?0:7-(total%7);
+  for (let d=1; d<=rem; d++) {
+    html += `<div class="drp-day other-month">${d}</div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function drpPickDay(ds) {
+  // First click: set start, begin drag
+  SCH.filterFrom = ds; SCH.filterTo = ds;
+  DRP.picking = true; DRP.hoverDate = ds;
+  drpRender();
+}
+
+function drpHover(ds) {
+  if (!DRP.picking) return;
+  DRP.hoverDate = ds;
+  // Live update range preview
+  if (ds >= SCH.filterFrom) {
+    SCH.filterTo = ds;
+  } else {
+    SCH.filterTo = SCH.filterFrom;
+    SCH.filterFrom = ds;
+  }
+  drpRender();
+}
+
+function drpMouseUp(ds) {
+  if (!DRP.picking) return;
+  DRP.picking = false;
+  if (!SCH.filterTo || SCH.filterTo < SCH.filterFrom) SCH.filterTo = SCH.filterFrom;
+  drpUpdateLabel();
+  renderSchCal();
+  drpRender();
+}
+
+function drpPrev() { DRP.curMonth--; if(DRP.curMonth<0){DRP.curMonth=11;DRP.curYear--;} drpRender(); }
+function drpNext() { DRP.curMonth++; if(DRP.curMonth>11){DRP.curMonth=0;DRP.curYear++;} drpRender(); }
+
+function drpClear() {
+  SCH.filterFrom=''; SCH.filterTo=''; DRP.picking=false;
+  schResetRange();
+  document.getElementById('drp-pop')?.classList.remove('open');
+}
+
+function drpConfirm() {
+  if (!SCH.filterTo) SCH.filterTo = SCH.filterFrom;
+  DRP.picking = false;
+  drpUpdateLabel();
+  renderSchCal();
+  document.getElementById('drp-pop')?.classList.remove('open');
+}
+
+document.addEventListener('mouseup', () => {
+  if (DRP.picking) {
+    DRP.picking = false;
+    if (!SCH.filterTo) SCH.filterTo = SCH.filterFrom;
+    drpUpdateLabel();
+    renderSchCal();
+  }
+});
+
+function drpUpdateLabel() {
+  const el = document.getElementById('drp-label');
+  if (el) el.textContent = schFmtRange(SCH.filterFrom, SCH.filterTo);
+}
+
+function schFmtRange(from, to) {
+  if (!from) return '選擇日期區間';
+  const fmt = s => s ? s.replace(/^\d{4}-/,'').replace('-','/') : '';
+  return from===to || !to ? fmt(from) : fmt(from)+' — '+fmt(to);
+}
+// ══ END DRP ══
+
+function schTypeFilter(cb) {
+  const allTypes = ['外部開會','內部開會','開發','其他'];
+  const boxes = document.querySelectorAll('input[type=checkbox][onclick*="schTypeFilter"]');
+  const checked = [...boxes].filter(b=>b.checked).map(b=>b.value);
+  // If all checked or none checked = show all
+  SCH.typeFilter = checked.length === allTypes.length || checked.length === 0 ? [] : checked;
+  renderSchCal();
+  // Re-render filter bar labels (update styling without full re-render)
+  boxes.forEach(b => {
+    const lbl = b.closest('label');
+    if (!lbl) return;
+    const active = SCH.typeFilter.length===0 || SCH.typeFilter.includes(b.value);
+    lbl.style.opacity = active ? '1' : '0.45';
+  });
+}
+
+function schResetRange() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const mon = new Date(today); const d=mon.getDay(); mon.setDate(mon.getDate()-(d===0?6:d-1));
+  const from = new Date(mon); from.setDate(from.getDate()-7);
+  const to   = new Date(mon); to.setDate(to.getDate()+20);
+  SCH.filterFrom = dateToStr(from);
+  SCH.filterTo   = dateToStr(to);
+  SCH.searchKw   = '';
+  const kwInput = document.getElementById('sch-kw');
+  if (kwInput) kwInput.value = '';
+  drpUpdateLabel();
   renderSchCal();
 }
 
 function renderSchCal() {
   const cal = document.getElementById('sch-cal');
   if (!cal) return;
-  const dows = ['一','二','三','四','五','六','日'];
-  let html = dows.map(d => `<div class="sch-dow">${d}</div>`).join('');
-  const y = SCH.year, m = SCH.month;
-  const firstDay = new Date(y, m, 1);
-  let startDow = firstDay.getDay();
-  startDow = startDow === 0 ? 6 : startDow - 1;
-  const daysInMonth = new Date(y, m+1, 0).getDate();
-  const daysInPrev = new Date(y, m, 0).getDate();
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-  for (let i = startDow-1; i >= 0; i--) {
-    const d = daysInPrev - i;
-    const mm = String(m).padStart(2,'0');
-    html += schDayHtml(`${y}-${mm}-${String(d).padStart(2,'0')}`, d, true, false);
+  // Preserve search focus
+  const kwEl = document.getElementById('sch-kw');
+  const kwFocused = kwEl && document.activeElement === kwEl;
+  const kwCaret = kwFocused ? kwEl.selectionStart : null;
+  const dowNames = ['日','一','二','三','四','五','六'];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayStr = dateToStr(today);
+  const kw = (SCH.searchKw||'').trim().toLowerCase();
+
+  const startDate = new Date((SCH.filterFrom || todayStr) + 'T00:00:00');
+  const endDate   = new Date((SCH.filterTo   || todayStr) + 'T00:00:00');
+  endDate.setDate(endDate.getDate()+1); // inclusive
+
+  let rows = '';
+  let lastMonth = null;
+  let cur = new Date(startDate);
+
+  while (cur < endDate) {
+    const dateStr = dateToStr(cur);
+    const dow     = cur.getDay();
+    const isToday = dateStr === todayStr;
+    const isWeekend = dow === 0 || dow === 6;
+    const mn = cur.getMonth()+1;
+    const showMonth = lastMonth !== (cur.getFullYear()*100+mn);
+    lastMonth = cur.getFullYear()*100+mn;
+
+    const allEvs = SCH.events.filter(e => {
+      if (e.date !== dateStr) return false;
+      if (SCH.typeFilter?.length > 0 && !SCH.typeFilter.includes(e.type)) return false;
+      return true;
+    }).sort((a,b)=>(a.period||'').localeCompare(b.period||''));
+    const evs = kw ? allEvs.filter(ev => {
+      const refName = schRefLabel(ev.ref||'');
+      return [refName, ev.label, ev.content].some(s=>(s||'').toLowerCase().includes(kw));
+    }) : allEvs;
+    // Also check day note
+    const noteMatch = kw ? (SCH.notes[dateStr]||'').toLowerCase().includes(kw) : false;
+    const pending = evs.filter(e=>!e.done);
+    const done    = evs.filter(e=>e.done);
+
+    // ── 4. weekend: light grey bg
+    const rowBg = isToday ? '#FFFBEA' : isWeekend ? '#F3F3F3' : '#fff';
+    const dateStyle = isToday
+      ? 'background:var(--accent);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12px'
+      : '';
+    const dowColor = isWeekend ? '#999' : 'var(--text3)';
+
+    const evLine = (ev) => {
+      const typeMap = {'外部開會':'外部會議','內部開會':'內部會議','開發':'開發','其他':'其他'};
+      const typeLabel = typeMap[ev.type]||ev.type||'';
+      const typeColor = {
+        '外部開會':'background:#FFE8E8;color:#8B0000;border:1px solid #F4A0A0',
+        '內部開會':'background:#E8F0FF;color:#0D2F7A;border:1px solid #90B4F0',
+        '開發':    'background:#E8F5E9;color:#1B5E20;border:1px solid #81C784',
+        '其他':    'background:#FFFDE7;color:#7A5800;border:1px solid #FFD54F',
+      }[ev.type]||'background:var(--surface2);color:var(--text2);border:1px solid var(--border)';
+      const refName = ev.type==='外部開會' ? schRefLabel(ev.ref||'') : '';
+      const intSub  = ev.type==='內部開會' && ev.internalSub ? ev.internalSub : '';
+      const detail  = [refName||intSub, ev.label].filter(Boolean).join(' ');
+      const badge   = `<span style="display:inline-block;${typeColor};border-radius:50px;font-size:10px;font-weight:700;padding:1px 7px;margin-right:4px;white-space:nowrap">${typeLabel}</span>${ev.period?`<span style="color:var(--text3);font-size:11px;margin-right:3px">${ev.period}</span>`:''}`;
+      return `<div draggable="true" data-evid="${ev.id}"
+        ondragstart="schRowDragStart(event,${ev.id})"
+        ondragend="schRowDragEnd(event)"
+        style="display:flex;align-items:flex-start;gap:4px;padding:2px 0;font-size:12px;line-height:1.5;cursor:grab;user-select:none">
+        <span style="color:#bbb;font-size:10px;margin-top:3px;flex-shrink:0">⋮⋮</span>
+        <input type="checkbox" ${ev.done?'checked':''} style="margin-top:3px;accent-color:var(--accent);flex-shrink:0" onclick="schToggleDone(${ev.id},event)">
+        <span onclick="schOpenForm('${dateStr}',${ev.id});event.stopPropagation()" style="cursor:pointer;flex:1">${badge}${detail}</span>
+        <button onclick="schDelete(${ev.id},event)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:10px;padding:0 2px;opacity:0.5;flex-shrink:0">✕</button>
+      </div>`;
+    };
+
+    // When searching, skip days with no matching events AND no matching note
+    if (kw && evs.length === 0 && !noteMatch) { cur.setDate(cur.getDate()+1); continue; }
+    const isMonday = dow === 1;
+    const weekTopBorder = isMonday ? 'border-top:2.5px solid #2C1A0E;' : '';
+
+    rows += `<tr data-date="${dateStr}"
+      ondragover="event.preventDefault();this.style.background='var(--accent-glow)'"
+      ondragleave="this.style.background=''"
+      ondrop="schRowDrop(event,'${dateStr}');this.style.background=''"
+      style="background:${rowBg};border-bottom:1px solid var(--border);${weekTopBorder}">
+      <td style="text-align:center;font-size:12px;font-weight:700;color:var(--text3);width:44px;padding:5px 4px;vertical-align:middle;white-space:nowrap;border-right:1px solid var(--border)">${showMonth?mn:''}</td>
+      <td style="text-align:center;width:36px;padding:5px 4px;vertical-align:middle;white-space:nowrap;border-right:1px solid var(--border)"><span style="${dateStyle}">${cur.getDate()}</span></td>
+      <td style="text-align:center;width:34px;padding:5px 4px;vertical-align:middle;white-space:nowrap;color:${dowColor};font-size:12px;font-weight:700;border-right:2px solid var(--border2)">${dowNames[dow]}</td>
+      <td style="padding:3px 8px;vertical-align:top;border-right:1px solid var(--border);min-height:28px">
+        ${pending.map(evLine).join('')}
+        <span onclick="schOpenForm('${dateStr}')" style="color:var(--text3);font-size:11px;cursor:pointer;opacity:0.35;display:block;padding:1px 0">＋</span>
+      </td>
+      <td style="padding:3px 8px;vertical-align:top;color:var(--text3);border-right:1px solid var(--border)">
+        ${done.map(evLine).join('')}
+      </td>
+      <td style="padding:3px 6px;vertical-align:top">
+        <textarea
+          class="sch-note-ta"
+          style="width:100%;min-height:28px;height:28px;resize:none;border:1px solid var(--border);border-radius:6px;font-size:11px;padding:4px 6px;background:var(--surface);font-family:inherit;color:var(--text2);line-height:1.4;box-sizing:border-box;overflow:hidden"
+          placeholder="備註…"
+          oninput="this.style.height='28px';this.style.height=this.scrollHeight+'px';schSaveDayNote('${dateStr}',this.value)"
+        >${SCH.notes?.[dateStr]||''}</textarea>
+      </td>
+    </tr>`;
+    cur.setDate(cur.getDate()+1);
   }
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    html += schDayHtml(dateStr, d, false, dateStr === todayStr);
-  }
-  const total = startDow + daysInMonth;
-  const remaining = total % 7 === 0 ? 0 : 7 - (total % 7);
-  for (let d = 1; d <= remaining; d++) {
-    const mm = String(m+2).padStart(2,'0');
-    html += schDayHtml(`${y}-${mm}-${String(d).padStart(2,'0')}`, d, true, false);
-  }
-  cal.innerHTML = html;
-  cal.querySelectorAll('.sch-day').forEach(cell => {
-    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('sch-drag-over'); });
-    cell.addEventListener('dragleave', () => cell.classList.remove('sch-drag-over'));
-    cell.addEventListener('drop', e => {
-      e.preventDefault(); cell.classList.remove('sch-drag-over');
-      const evId = parseInt(e.dataTransfer.getData('text/plain'));
-      const newDate = cell.dataset.date;
-      const ev = SCH.events.find(x => x.id === evId);
-      if (ev && newDate) { ev.date = newDate; schSave(); renderSchCal(); }
+
+  // ── 1. header: dark text not white
+  cal.innerHTML = `
+  <div style="border:2px solid #2C1A0E;border-radius:14px;overflow:hidden;box-shadow:4px 4px 0 #E8C060;">
+    <table style="width:100%;border-collapse:collapse;table-layout:fixed">
+      <thead>
+        <tr style="background:var(--surface2);border-bottom:2px solid #2C1A0E">
+          <th style="width:44px;padding:8px 4px;color:var(--text);font-size:12px;font-weight:800;border-right:1px solid var(--border2);white-space:nowrap;text-align:center">月份</th>
+          <th style="width:36px;padding:8px 4px;color:var(--text);font-size:12px;font-weight:800;border-right:1px solid var(--border2);white-space:nowrap;text-align:center">日期</th>
+          <th style="width:34px;padding:8px 4px;color:var(--text);font-size:12px;font-weight:800;border-right:2px solid var(--border2);white-space:nowrap;text-align:center">星期</th>
+          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;border-right:1px solid var(--border2);text-align:left">預定行程</th>
+          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;text-align:left;border-right:1px solid var(--border2)">完成行程</th>
+          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;text-align:left;width:160px">其他備註</th>
+        </tr>
+      </thead>
+      <tbody id="sch-tbody">${rows}</tbody>
+    </table>
+  </div>`;
+
+  // Auto-resize all note textareas after render
+  setTimeout(() => {
+    document.querySelectorAll('.sch-note-ta').forEach(ta => {
+      ta.style.height = '28px';
+      ta.style.height = ta.scrollHeight + 'px';
     });
-  });
-  cal.querySelectorAll('.sch-event[draggable]').forEach(el => {
-    el.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('text/plain', el.dataset.id);
-      setTimeout(() => { if(el) el.style.opacity = '0.4'; }, 0);
-    });
-    el.addEventListener('dragend', () => { if(el) el.style.opacity = ''; });
-  });
+    // Restore search focus
+    if (kwFocused) {
+      const inp = document.getElementById('sch-kw');
+      if (inp) { inp.focus(); try { inp.setSelectionRange(kwCaret, kwCaret); } catch(e){} }
+    }
+  }, 10);
+
+  // Scroll today into view
+  setTimeout(() => {
+    const todayRow = cal.querySelector(`tr[data-date="${todayStr}"]`);
+    if (todayRow) todayRow.scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 50);
 }
 
-function schDayHtml(dateStr, dayNum, isOther, isToday) {
-  const evs = SCH.events.filter(e => e.date === dateStr).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
-  const cls = isOther ? 'sch-other' : isToday ? 'sch-today' : '';
-  const numHtml = isToday
-    ? `<span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px">${dayNum}</span>`
-    : `<span style="font-size:11px;font-weight:700;color:var(--text3)">${dayNum}</span>`;
-  const evHtml = evs.map(ev => {
-    const typeCls = ev.type==='cust'?'type-cust':ev.type==='part'?'type-part':'type-admin';
-    const doneCls = ev.done ? 'done' : '';
-    const timeStr = ev.time ? `<div class="sch-event-time">${ev.time}</div>` : '';
-    return `<div class="sch-event ${typeCls} ${doneCls}" draggable="true" data-id="${ev.id}" title="${ev.label}">
-      <input type="checkbox" class="sch-event-check" ${ev.done?'checked':''} onclick="schToggleDone(${ev.id},event)">
-      <div class="sch-event-body">${timeStr}<div class="sch-event-label">${ev.label}</div></div>
-      <button class="sch-event-del" onclick="schDelete(${ev.id},event)">✕</button>
-    </div>`;
-  }).join('');
-  return `<div class="sch-day ${cls}" data-date="${dateStr}">
-    <div class="sch-day-num" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
-      ${numHtml}
-      <span class="sch-add-btn" onclick="schOpenForm('${dateStr}')">＋</span>
-    </div>
-    ${evHtml}
-  </div>`;
+function dateToStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
+
+// ── 2. Drag-and-drop for table rows
+let _schDragId = null;
+function schRowDragStart(e, id) {
+  _schDragId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { if(e.target) e.target.style.opacity='0.4'; }, 0);
+}
+function schRowDragEnd(e) {
+  if(e.target) e.target.style.opacity='';
+  _schDragId = null;
+}
+function schRowDrop(e, newDate) {
+  e.preventDefault();
+  if (!_schDragId) return;
+  const ev = SCH.events.find(x=>x.id===_schDragId);
+  if (ev && newDate) { ev.date = newDate; schSave(); renderSchCal(); }
+}
+
+function schDayHtml() {} // kept for compatibility
 
 function schPrev() { SCH.month--; if(SCH.month<0){SCH.month=11;SCH.year--;} renderSchedule(); }
 function schNext() { SCH.month++; if(SCH.month>11){SCH.month=0;SCH.year++;} renderSchedule(); }
@@ -6381,75 +6870,323 @@ function schToggleDone(id, e) {
 }
 function schDelete(id, e) {
   e.stopPropagation();
-  SCH.events = SCH.events.filter(x=>x.id!==id);
+  // Also remove recurring children
+  SCH.events = SCH.events.filter(x=>x.id!==id && x.recurParentId!==id);
   schSave(); renderSchCal();
 }
 function schOpenForm(dateStr, editId) {
   const existing = editId ? SCH.events.find(x=>x.id===editId) : null;
-  const custOpts = DB.customers.map(c=>`<option value="cust:${c.id}" ${existing?.ref==='cust:'+c.id?'selected':''}>${c.company}</option>`).join('');
-  const partOpts = DB.partners.map(p=>`<option value="part:${p.id}" ${existing?.ref==='part:'+p.id?'selected':''}>${p.company||p.companyEn}</option>`).join('');
-  const initType = existing?.type || 'admin';
+  const initType = existing?.type || '';
+  const initPeriod = existing?.period || '';
+  const initRef = existing?.ref || '';
+  const initInternalSub = existing?.internalSub || '';
+
   openModal('schModal', existing?'編輯行程':'新增行程', `
     <div class="form-grid">
       <div class="form-group"><label>日期</label>
         <input id="sch-date" type="date" class="form-control" value="${existing?.date||dateStr}">
       </div>
-      <div class="form-group"><label>時間</label>
-        <input id="sch-time" type="time" class="form-control" value="${existing?.time||''}">
+      <div class="form-group"><label>&nbsp;</label>
+        <div style="display:flex;gap:14px;margin-top:8px;">
+          ${['上午','下午'].map(p=>`<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:700">
+            <input type="radio" name="sch-period" value="${p}" ${initPeriod===p?'checked':''} style="accent-color:var(--accent);width:16px;height:16px"> ${p}
+          </label>`).join('')}
+        </div>
       </div>
       <div class="form-group form-full"><label>類型</label>
-        <select id="sch-type" class="form-control" onchange="schTypeChange()">
-          <option value="admin" ${initType==='admin'?'selected':''}>📋 日常行政</option>
-          <option value="cust"  ${initType==='cust'?'selected':''}>🏢 客戶拜訪</option>
-          <option value="part"  ${initType==='part'?'selected':''}>🤝 合作窗口</option>
-        </select>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+          ${[['外部開會','🤝 開會（外部）'],['內部開會','👥 開會（內部）'],['開發','🔍 開發'],['其他','📌 其他']].map(([v,l])=>`
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;border:2px solid var(--border2);border-radius:50px;font-size:13px;font-weight:700;transition:all 0.15s" class="sch-type-chip ${initType===v?'sch-chip-active':''}">
+            <input type="radio" name="sch-type-r" value="${v}" ${initType===v?'checked':''} style="display:none" onchange="schTypeChange2()"> ${l}
+          </label>`).join('')}
+        </div>
       </div>
-      <div class="form-group form-full" id="sch-ref-wrap" style="${initType==='admin'?'display:none':''}">
-        <label id="sch-ref-label">${initType==='part'?'選擇合作窗口':'選擇客戶'}</label>
-        <select id="sch-ref" class="form-control">
-          <option value="">請選擇</option>
-          <optgroup label="客戶"   id="sch-cust-grp" ${initType==='part'?'style="display:none"':''}>${custOpts}</optgroup>
-          <optgroup label="合作窗口" id="sch-part-grp" ${initType==='cust'?'style="display:none"':''}>${partOpts}</optgroup>
-        </select>
+      <div class="form-group form-full" id="sch-ext-wrap" style="${initType==='外部開會'?'':'display:none'}">
+        <label>搜尋客戶或合作窗口</label>
+        <div style="position:relative">
+          <input id="sch-search" class="form-control" placeholder="輸入一個字搜尋公司名稱…" oninput="schSearchRef(this.value)" autocomplete="off" value="${initRef?schRefLabel(initRef):''}">
+          <div id="sch-search-results" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:2px solid var(--accent);border-radius:10px;overflow:hidden;z-index:600;max-height:180px;overflow-y:auto;margin-top:2px;box-shadow:4px 4px 0 rgba(0,0,0,0.1)"></div>
+        </div>
+        <input type="hidden" id="sch-ref" value="${initRef}">
       </div>
-      <div class="form-group form-full"><label>標題 *</label>
+      <div class="form-group form-full" id="sch-int-wrap" style="${initType==='內部開會'?'':'display:none'}">
+        <label>會議類型</label>
+        <div style="display:flex;gap:14px;margin-top:8px;">
+          ${['例行會議','教育訓練'].map(s=>`<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:700">
+            <input type="radio" name="sch-int-sub" value="${s}" ${initInternalSub===s?'checked':''} style="accent-color:var(--accent);width:16px;height:16px"> ${s}
+          </label>`).join('')}
+        </div>
+      </div>
+      <div class="form-group form-full"><label>標題 ${(initType==='內部開會'||initType==='開發')?'<span style="font-size:11px;color:var(--text3);font-weight:400">（選填）</span>':'*'}</label>
         <input id="sch-label" class="form-control" placeholder="行程標題…" value="${existing?.label||''}">
       </div>
       <div class="form-group form-full"><label>備註</label>
-        <textarea id="sch-content" class="form-control" rows="3" placeholder="行程內容或備註…">${existing?.content||''}</textarea>
+        <textarea id="sch-content" class="form-control" rows="2" placeholder="備註…">${existing?.content||''}</textarea>
+      </div>
+      <div class="form-group form-full">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:700">
+          <input type="checkbox" id="sch-recur-on" style="accent-color:var(--accent);width:15px;height:15px" ${existing?.recur?'checked':''} onchange="schRecurToggle()">
+          設定為例行性行程
+        </label>
+      </div>
+      <div id="sch-recur-wrap" style="${existing?.recur?'':'display:none'};grid-column:1/-1;background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;padding:14px 16px;display:${existing?.recur?'block':'none'}">
+        <div style="margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:8px">重複方式</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            ${[['每天','daily'],['每週','weekly'],['每月','monthly'],['自定義','custom']].map(([l,v])=>`
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;padding:5px 12px;border:2px solid var(--border2);border-radius:50px;font-size:12px;font-weight:700;transition:all 0.15s" class="recur-chip ${(existing?.recur?.mode||'weekly')===v?'recur-chip-act':''}">
+              <input type="radio" name="sch-recur-mode" value="${v}" ${(existing?.recur?.mode||'weekly')===v?'checked':''} style="display:none" onchange="schRecurModeChange()"> ${l}
+            </label>`).join('')}
+          </div>
+        </div>
+        <div id="sch-recur-weekly" style="${(existing?.recur?.mode||'weekly')!=='weekly'?'display:none':''}">
+          <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:8px">重複日期</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+            ${['一','二','三','四','五','六','日'].map((d,i)=>`
+            <label class="dow-chip" style="width:34px;height:34px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:700;transition:all 0.15s;${(existing?.recur?.dows||[]).includes(i)?'background:var(--accent);border-color:var(--accent);color:#fff':''}">
+              <input type="checkbox" name="sch-recur-dow" value="${i}" ${(existing?.recur?.dows||[]).includes(i)?'checked':''} style="display:none" onchange="schDowChange(this)"> ${d}
+            </label>`).join('')}
+          </div>
+        </div>
+        <div id="sch-recur-custom" style="${existing?.recur?.mode!=='custom'?'display:none':''}">
+          <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:8px">重複間隔</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <span style="font-size:13px">每</span>
+            <input id="sch-recur-interval" type="number" min="1" max="99" class="form-control" style="width:70px" value="${existing?.recur?.interval||1}">
+            <select id="sch-recur-unit" class="form-control" style="width:80px">
+              <option value="day"   ${existing?.recur?.unit==='day'?'selected':''}>天</option>
+              <option value="week"  ${existing?.recur?.unit==='week'?'selected':''}>週</option>
+              <option value="month" ${existing?.recur?.unit==='month'?'selected':''}>月</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:8px">結束時間</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="radio" name="sch-recur-end" value="forever" ${!existing?.recur?.end||existing?.recur?.end==='forever'?'checked':''} style="accent-color:var(--accent)" onchange="schRecurEndChange()"> 持續不停
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="radio" name="sch-recur-end" value="date" ${existing?.recur?.end==='date'?'checked':''} style="accent-color:var(--accent)" onchange="schRecurEndChange()"> 於
+              <input id="sch-recur-enddate" type="date" class="form-control" style="flex:1" value="${existing?.recur?.endDate||''}" ${existing?.recur?.end==='date'?'':'disabled'}>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="radio" name="sch-recur-end" value="count" ${existing?.recur?.end==='count'?'checked':''} style="accent-color:var(--accent)" onchange="schRecurEndChange()"> 重複
+              <input id="sch-recur-count" type="number" min="1" max="999" class="form-control" style="width:70px" value="${existing?.recur?.count||10}" ${existing?.recur?.end==='count'?'':'disabled'}> 次
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   `, () => schSaveForm(editId));
+
+  setTimeout(() => {
+    document.querySelectorAll('.sch-type-chip').forEach(chip => {
+      chip.addEventListener('click', () => { chip.querySelector('input').checked=true; schTypeChange2(); });
+    });
+    // Init recur chip styles
+    document.querySelectorAll('.recur-chip').forEach(chip => {
+      chip.addEventListener('click', () => { chip.querySelector('input').checked=true; schRecurModeChange(); });
+      if (chip.querySelector('input:checked')) schApplyChipStyle(chip, true);
+    });
+  }, 30);
 }
-function schTypeChange() {
-  const type = document.getElementById('sch-type')?.value;
-  const wrap = document.getElementById('sch-ref-wrap');
-  const custGrp = document.getElementById('sch-cust-grp');
-  const partGrp = document.getElementById('sch-part-grp');
-  const lbl = document.getElementById('sch-ref-label');
-  if (!wrap) return;
-  wrap.style.display = type==='admin' ? 'none' : '';
-  if (custGrp) custGrp.style.display = type==='part' ? 'none' : '';
-  if (partGrp) partGrp.style.display = type==='cust' ? 'none' : '';
-  if (lbl) lbl.textContent = type==='part' ? '選擇合作窗口' : '選擇客戶';
+
+function schRecurToggle() {
+  const on = document.getElementById('sch-recur-on')?.checked;
+  const wrap = document.getElementById('sch-recur-wrap');
+  if (wrap) wrap.style.display = on ? 'block' : 'none';
 }
+
+function schRecurModeChange() {
+  const mode = document.querySelector('input[name="sch-recur-mode"]:checked')?.value || 'weekly';
+  document.querySelectorAll('.recur-chip').forEach(chip => {
+    schApplyChipStyle(chip, chip.querySelector('input').value === mode);
+  });
+  const wk = document.getElementById('sch-recur-weekly');
+  const cu = document.getElementById('sch-recur-custom');
+  if (wk) wk.style.display = mode === 'weekly' ? '' : 'none';
+  if (cu) cu.style.display = mode === 'custom'  ? '' : 'none';
+}
+
+function schApplyChipStyle(chip, active) {
+  chip.style.background    = active ? 'var(--accent-glow)' : '';
+  chip.style.borderColor   = active ? 'var(--accent)' : '';
+  chip.style.color         = active ? 'var(--accent)' : '';
+}
+
+function schDowChange(input) {
+  const label = input.closest('label');
+  if (!label) return;
+  const checked = input.checked;
+  label.style.background   = checked ? 'var(--accent)' : '';
+  label.style.borderColor  = checked ? 'var(--accent)' : '';
+  label.style.color        = checked ? '#fff' : '';
+}
+
+function schRecurEndChange() {
+  const mode = document.querySelector('input[name="sch-recur-end"]:checked')?.value;
+  const edate = document.getElementById('sch-recur-enddate');
+  const count = document.getElementById('sch-recur-count');
+  if (edate) { edate.disabled = mode !== 'date';  edate.style.opacity = mode === 'date'  ? '1' : '0.4'; }
+  if (count) { count.disabled = mode !== 'count'; count.style.opacity = mode === 'count' ? '1' : '0.4'; }
+}
+
+function schRefLabel(ref) {
+  if (!ref) return '';
+  if (ref.startsWith('text:')) return ref.slice(5);
+  const [type, id] = ref.split(':');
+  if (type==='cust') { const c=DB.customers.find(x=>x.id===parseInt(id)); return c?.company||''; }
+  if (type==='part') { const p=DB.partners.find(x=>x.id===parseInt(id)); return p?.company||p?.companyEn||''; }
+  return ref;
+}
+
+function schTypeChange2() {
+  const sel = document.querySelector('input[name="sch-type-r"]:checked')?.value||'';
+  document.querySelectorAll('.sch-type-chip').forEach(chip => {
+    const active = chip.querySelector('input').value===sel;
+    chip.style.background = active ? 'var(--accent-glow)' : '';
+    chip.style.borderColor = active ? 'var(--accent)' : '';
+    chip.style.color = active ? 'var(--accent)' : '';
+  });
+  document.getElementById('sch-ext-wrap').style.display = sel==='外部開會' ? '' : 'none';
+  document.getElementById('sch-int-wrap').style.display = sel==='內部開會' ? '' : 'none';
+}
+
+function schSearchRef(kw) {
+  const res = document.getElementById('sch-search-results');
+  const hid = document.getElementById('sch-ref');
+  if (!res) return;
+  if (!kw.trim()) { res.style.display='none'; if(hid) hid.value=''; return; }
+  // Clear previously picked ref so user can keep typing
+  if (hid && hid.value && !hid.value.startsWith('text:')) {
+    // only clear if it was a DB pick (cust:/part:), not a typed text
+  }
+  const k = kw.trim();
+  const custMatches = DB.customers.filter(c=>(c.company||'').includes(k)).slice(0,6);
+  const partMatches = DB.partners.filter(p=>((p.company||'')+(p.companyEn||'')).includes(k)).slice(0,6);
+  const style = 'padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border)';
+  let html = '';
+  custMatches.forEach(c => {
+    html += '<div style="'+style+'" onmouseover="this.style.background=\'var(--accent-glow)\'" onmouseout="this.style.background=\'\'" onclick="schPickRef(\'cust:'+c.id+'\',\''+c.company.replace(/'/g,'\u2019')+'\')">🏢 '+c.company+'</div>';
+  });
+  partMatches.forEach(p => {
+    const nm = (p.company||p.companyEn||'').replace(/'/g,'\u2019');
+    html += '<div style="'+style+'" onmouseover="this.style.background=\'var(--accent-glow)\'" onmouseout="this.style.background=\'\'" onclick="schPickRef(\'part:'+p.id+'\',\''+nm+'\')">🤝 '+(p.company||p.companyEn||'')+'</div>';
+  });
+  if (!html) {
+    html = '<div style="'+style+';color:var(--text3);font-style:italic">找不到符合結果，將直接使用輸入文字</div>';
+    // Set ref to raw text
+    const hid = document.getElementById('sch-ref');
+    if (hid) hid.value = 'text:' + kw.trim();
+  }
+  res.innerHTML = html;
+  res.style.display = '';
+}
+
+function schPickRef(ref, label) {
+  const inp = document.getElementById('sch-search');
+  const hid = document.getElementById('sch-ref');
+  const res = document.getElementById('sch-search-results');
+  if (inp) inp.value = label;
+  if (hid) hid.value = ref;
+  if (res) res.style.display = 'none';
+}
+
 function schSaveForm(editId) {
   const date    = document.getElementById('sch-date')?.value;
-  const time    = document.getElementById('sch-time')?.value || '';
-  const type    = document.getElementById('sch-type')?.value || 'admin';
-  const ref     = document.getElementById('sch-ref')?.value || '';
-  const label   = document.getElementById('sch-label')?.value.trim() || '';
-  const content = document.getElementById('sch-content')?.value.trim() || '';
+  const period  = document.querySelector('input[name="sch-period"]:checked')?.value||'';
+  const type    = document.querySelector('input[name="sch-type-r"]:checked')?.value||'';
+  const ref     = document.getElementById('sch-ref')?.value||'';
+  const intSub  = document.querySelector('input[name="sch-int-sub"]:checked')?.value||'';
+  const devNote = document.getElementById('sch-dev-note')?.value?.trim()||'';
+  const label   = document.getElementById('sch-label')?.value.trim()||'';
+  const content = document.getElementById('sch-content')?.value.trim()||'';
   if (!date)  { toast('⚠ 請選擇日期'); return false; }
-  if (!label) { toast('⚠ 請填寫標題'); return false; }
+  if (!label && type !== '內部開會' && type !== '開發') { toast('⚠ 請填寫標題'); return false; }
+
+  const recurOn = document.getElementById('sch-recur-on')?.checked;
+  let recur = null;
+  if (recurOn) {
+    const mode    = document.querySelector('input[name="sch-recur-mode"]:checked')?.value||'weekly';
+    const endMode = document.querySelector('input[name="sch-recur-end"]:checked')?.value||'forever';
+    const dows    = [...document.querySelectorAll('input[name="sch-recur-dow"]:checked')].map(x=>parseInt(x.value));
+    recur = {
+      mode, dows,
+      interval: parseInt(document.getElementById('sch-recur-interval')?.value||1),
+      unit:     document.getElementById('sch-recur-unit')?.value||'week',
+      end:      endMode,
+      endDate:  document.getElementById('sch-recur-enddate')?.value||'',
+      count:    parseInt(document.getElementById('sch-recur-count')?.value||10),
+    };
+  }
+
+  const baseObj = { date, period, type, ref, internalSub:intSub, devNote, label, content, recur };
+
   if (editId) {
     const ev = SCH.events.find(x=>x.id===editId);
-    if (ev) Object.assign(ev, {date,time,type,ref,label,content});
+    if (ev) Object.assign(ev, baseObj);
+    SCH.events = SCH.events.filter(x=>x.recurParentId!==editId);
+    if (recur) schExpandRecur(editId, baseObj);
   } else {
-    SCH.events.push({ id: Date.now(), date, time, type, ref, label, content, done: false });
+    const id = Date.now();
+    SCH.events.push({ id, ...baseObj, done:false });
+    if (recur) schExpandRecur(id, baseObj);
   }
-  schSave(); renderSchCal();
+  schSave(); saveLocalCache && saveLocalCache(); renderSchCal();
   return true;
+}
+
+function schExpandRecur(parentId, obj) {
+  const { date, recur } = obj;
+  if (!recur) return;
+  const start   = new Date(date + 'T00:00:00');
+  const mode    = recur.mode;
+  const maxCnt  = recur.end==='count' ? recur.count-1 : 365;
+  const endDate = recur.end==='date' && recur.endDate ? new Date(recur.endDate+'T00:00:00') : null;
+  const limit   = new Date(start.getTime() + 730*86400000); // 2 year cap
+  const toStr   = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const mkId    = () => Date.now() + Math.floor(Math.random()*99999);
+
+  const nextDay = (d, n=1) => { const nd=new Date(d); nd.setDate(nd.getDate()+n); return nd; };
+  const nextMonth = (d,n=1) => { const nd=new Date(d); nd.setMonth(nd.getMonth()+n); return nd; };
+
+  let count = 0;
+
+  if (mode==='weekly' && recur.dows?.length) {
+    // Iterate day by day, pick matching weekdays
+    let cur = nextDay(start);
+    while (count < maxCnt && cur <= limit) {
+      if (endDate && cur > endDate) break;
+      const dow = cur.getDay()===0 ? 6 : cur.getDay()-1;
+      if (recur.dows.includes(dow)) {
+        SCH.events.push({ id:mkId(), ...obj, date:toStr(cur), done:false, recurParentId:parentId, recur:null });
+        count++;
+      }
+      cur = nextDay(cur);
+    }
+  } else {
+    let cur = new Date(start);
+    const step = () => {
+      if (mode==='daily')   return nextDay(cur);
+      if (mode==='weekly')  return nextDay(cur,7);
+      if (mode==='monthly') return nextMonth(cur);
+      if (mode==='custom') {
+        const n=recur.interval||1, u=recur.unit||'week';
+        if (u==='day')   return nextDay(cur,n);
+        if (u==='week')  return nextDay(cur,n*7);
+        if (u==='month') return nextMonth(cur,n);
+      }
+      return nextDay(cur,7);
+    };
+    cur = step();
+    while (count < maxCnt && cur <= limit) {
+      if (endDate && cur > endDate) break;
+      SCH.events.push({ id:mkId(), ...obj, date:toStr(cur), done:false, recurParentId:parentId, recur:null });
+      count++;
+      cur = step();
+    }
+  }
 }
 
 // Check if already authenticated this session
