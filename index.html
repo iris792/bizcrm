@@ -3323,19 +3323,12 @@ function showCustomerForm(c) {
       <!-- 公司地址 + 統一編號 with AI lookup -->
       <div class="form-group">
         <label>公司地址</label>
-        <input id="cf-address" class="form-control" placeholder="請輸入或點右側自動查詢" value="${t.address||''}">
+        <input id="cf-address" class="form-control" placeholder="公司地址" value="${t.address||''}">
       </div>
       <div class="form-group">
         <label>統一編號 <span style="color:var(--red);font-size:11px;">*必填</span></label>
         <input id="cf-taxid" class="form-control" placeholder="8碼統一編號（必填）" value="${t.taxid||''}"
           oninput="this.style.borderColor=''">
-      </div>
-      <div class="form-full" style="margin-top:-8px;margin-bottom:4px;display:flex;align-items:center;gap:10px;">
-        <button type="button" class="ai-lookup-btn" id="cf-lookup-btn" onclick="lookupCompanyInfo()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          自動查詢公開資訊
-        </button>
-        <span id="cf-lookup-status" style="font-size:12px;color:var(--text3);"></span>
       </div>
 
       <!-- 聯繫人 區塊（多筆） -->
@@ -4231,95 +4224,6 @@ function renderPartDetail() {
   return renderPartList();
 }
 
-// ── 名片掃描 ──
-function scanBusinessCard(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const status = document.getElementById('card-scan-status');
-  if (status) status.textContent = '解析中…';
-
-  const reader = new FileReader();
-  reader.onload = async e => {
-    const base64 = e.target.result.split(',')[1];
-    const mediaType = file.type || 'image/jpeg';
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
-              { type: 'text', text: `請解析這張名片，回傳 JSON 格式（只回傳 JSON，不要其他文字）：
-{
-  "company": "公司中文名稱",
-  "companyEn": "公司英文名稱",
-  "name": "聯繫人姓名",
-  "dept": "部門職稱",
-  "phone": "電話（辦公室）",
-  "mobile": "手機",
-  "email": "Email",
-  "ext": "分機（若有）",
-  "job": "職稱"
-}
-若欄位不存在填空字串。` }
-            ]
-          }]
-        })
-      });
-      const data = await res.json();
-      const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
-      let parsed;
-      try {
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        parsed = JSON.parse(jsonMatch?.[0] || text);
-      } catch { throw new Error('無法解析回傳格式'); }
-
-      // Fill in form fields
-      if (parsed.company) {
-        const zhInput = document.getElementById('pf-nameZh') || document.getElementById('pf-companyZh');
-        const sel = document.querySelector('#pf-company-wrap select');
-        const inp = document.querySelector('#pf-company-wrap input');
-        if (sel) sel.value = parsed.company;
-        else if (inp) inp.value = parsed.company;
-        else {
-          const wrap = document.getElementById('pf-company-wrap');
-          if (wrap) { const i = wrap.querySelector('input'); if(i) i.value = parsed.company; }
-        }
-      }
-      if (parsed.companyEn) {
-        const en = document.getElementById('pf-companyEn');
-        if (en) en.value = parsed.companyEn;
-      }
-
-      // Fill first contact row
-      const firstRow = document.getElementById('pf-ct-row-0');
-      if (firstRow) {
-        const f = (cls, val) => { const el = firstRow.querySelector(cls); if(el&&val) el.value = val; };
-        f('.pf-ct-name',  parsed.name);
-        f('.pf-ct-dept',  parsed.dept || parsed.job);
-        f('.pf-ct-phone', parsed.phone || parsed.mobile);
-        f('.pf-ct-mail',  parsed.email);
-        f('.pf-ct-job',   parsed.job);
-        // ext: look for input with placeholder 分機
-        const extInputs = firstRow.querySelectorAll('input');
-        extInputs.forEach(el => { if(el.placeholder && el.placeholder.includes('分機') && parsed.ext) el.value = parsed.ext; });
-      }
-
-      if (status) status.textContent = '✅ 解析完成';
-      toast('✅ 名片解析完成，請確認並補充資料');
-      input.value = '';
-    } catch(err) {
-      if (status) status.textContent = '❌ 解析失敗';
-      toast('❌ 名片解析失敗：' + err.message);
-    }
-  };
-  reader.readAsDataURL(file);
-}
-
 function openNewPartner() { showPartnerForm(null); }
 function openEditPartner(id) {
   closePartModal(id);
@@ -4576,13 +4480,7 @@ function showPartnerForm(p) {
             ${['代理商','原廠','技術支援','同業','顧問','其它'].map(v=>`<option value="${v}" ${t.category===v?'selected':''}>${v}</option>`).join('')}
           </select>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding-bottom:2px">
-          <label class="btn btn-ghost btn-sm" style="cursor:pointer;gap:6px;margin:0">
-            📷 上傳名片
-            <input type="file" accept="image/*" style="display:none" onchange="scanBusinessCard(this)">
-          </label>
-          <span id="card-scan-status" style="font-size:11px;color:var(--text3)"></span>
-        </div>
+
       </div>
       <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px">
         <div>
@@ -6807,9 +6705,9 @@ function renderSchCal() {
           <th style="width:44px;padding:8px 4px;color:var(--text);font-size:12px;font-weight:800;border-right:1px solid var(--border2);white-space:nowrap;text-align:center">月份</th>
           <th style="width:36px;padding:8px 4px;color:var(--text);font-size:12px;font-weight:800;border-right:1px solid var(--border2);white-space:nowrap;text-align:center">日期</th>
           <th style="width:34px;padding:8px 4px;color:var(--text);font-size:12px;font-weight:800;border-right:2px solid var(--border2);white-space:nowrap;text-align:center">星期</th>
-          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;border-right:1px solid var(--border2);text-align:left">預定行程</th>
-          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;text-align:left;border-right:1px solid var(--border2)">完成行程</th>
-          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;text-align:left;width:160px">其他備註</th>
+          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;border-right:1px solid var(--border2);text-align:left;width:37.5%">預定行程</th>
+          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;text-align:left;border-right:1px solid var(--border2);width:37.5%">完成行程</th>
+          <th style="padding:8px 12px;color:var(--text);font-size:12px;font-weight:800;text-align:left;width:25%">其他備註</th>
         </tr>
       </thead>
       <tbody id="sch-tbody">${rows}</tbody>
