@@ -6036,32 +6036,161 @@ function openCustImport() {
   window._pendingCustImport = [];
   openModal('custImportModal', '📥 匯入客戶資料', `
     <div>
-      <div class="import-step">
-        <div class="import-step-num">1</div>
-        <div class="import-step-body">
-          <div class="import-step-title">下載 Excel 範本</div>
-          <div class="import-step-desc">按照欄位格式填入客戶資料</div>
-          <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="downloadCustTemplate()">📄 下載範本</button>
-          <div style="margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:11px;color:var(--text2);line-height:2;">
-            A:公司名稱　B:電話　C:地址　D:統一編號　E:產業（gov/medical/edu/corp/npo）<br>
-            F:企業細項　G:等級（L1~L5）　H:負責業務　I:資訊來源　J:長期配合SI　K:PC數規模<br>
-            L:上市櫃（1=是）　M:總機擋下（1=是）　N:備註
+      <!-- Mode selector -->
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <button class="btn btn-primary btn-sm" id="import-mode-normal" onclick="setCustImportMode('normal')" style="flex:1">📋 標準匯入</button>
+        <button class="btn btn-ghost btn-sm" id="import-mode-check" onclick="setCustImportMode('check')" style="flex:1">🔍 比對重複後匯入</button>
+      </div>
+
+      <!-- 標準匯入 -->
+      <div id="import-panel-normal">
+        <div class="import-step">
+          <div class="import-step-num">1</div>
+          <div class="import-step-body">
+            <div class="import-step-title">下載 Excel 範本</div>
+            <div class="import-step-desc">按照欄位格式填入客戶資料</div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="downloadCustTemplate()">📄 下載範本</button>
+            <div style="margin-top:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:11px;color:var(--text2);line-height:2;">
+              A:公司名稱　B:電話　C:地址　D:統一編號　E:產業（gov/medical/edu/corp/npo）<br>
+              F:企業細項　G:等級（L1~L5）　H:負責業務　I:資訊來源　J:長期配合SI　K:PC數規模<br>
+              L:上市櫃（1=是）　M:總機擋下（1=是）　N:備註
+            </div>
           </div>
         </div>
+        <div class="import-step">
+          <div class="import-step-num">2</div>
+          <div class="import-step-body">
+            <div class="import-step-title">填寫後上傳</div>
+            <label class="btn btn-primary btn-sm" style="margin-top:8px;cursor:pointer;">
+              📂 選擇 Excel 檔案
+              <input type="file" accept=".xlsx,.xls" style="display:none" onchange="onCustExcelUpload(this)">
+            </label>
+          </div>
+        </div>
+        <div id="cust-import-preview" style="margin-top:4px;"></div>
       </div>
-      <div class="import-step">
-        <div class="import-step-num">2</div>
-        <div class="import-step-body">
-          <div class="import-step-title">填寫後上傳</div>
-          <label class="btn btn-primary btn-sm" style="margin-top:8px;cursor:pointer;">
-            📂 選擇 Excel 檔案
-            <input type="file" accept=".xlsx,.xls" style="display:none" onchange="onCustExcelUpload(this)">
+
+      <!-- 比對重複後匯入 -->
+      <div id="import-panel-check" style="display:none">
+        <div class="import-step">
+          <div class="import-step-num">1</div>
+          <div class="import-step-body">
+            <div class="import-step-title">上傳公司名稱清單</div>
+            <div class="import-step-desc">Excel 第一欄為公司名稱（A欄），系統自動比對資料庫</div>
+            <label class="btn btn-primary btn-sm" style="margin-top:8px;cursor:pointer;">
+              📂 上傳清單 Excel
+              <input type="file" accept=".xlsx,.xls" style="display:none" onchange="onDupCheckUpload(this)">
+            </label>
+          </div>
+        </div>
+        <div id="dup-check-result" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  `, () => {
+    if (window._custImportMode === 'check') {
+      importDupChecked();
+    } else {
+      executeCustImport();
+    }
+  });
+
+  // Init mode
+  window._custImportMode = 'normal';
+}
+
+function setCustImportMode(mode) {
+  window._custImportMode = mode;
+  document.getElementById('import-panel-normal').style.display = mode==='normal' ? '' : 'none';
+  document.getElementById('import-panel-check').style.display  = mode==='check'  ? '' : 'none';
+  const btnN = document.getElementById('import-mode-normal');
+  const btnC = document.getElementById('import-mode-check');
+  if (btnN) { btnN.className = mode==='normal' ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm'; }
+  if (btnC) { btnC.className = mode==='check'  ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm'; }
+}
+
+function onDupCheckUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  loadXLSX(() => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const wb = XLSX.read(e.target.result, {type:'binary'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+      // Collect company names from col A (skip header if it's text)
+      const names = rows.map(r=>(r[0]||'').toString().trim()).filter(n=>n && n!=='公司名稱');
+      if (!names.length) { toast('⚠ 找不到公司名稱資料'); return; }
+
+      // Compare with DB
+      const existingNames = new Set(DB.customers.map(c=>(c.company||'').trim()));
+      const dupes = names.filter(n => existingNames.has(n));
+      const newOnes = names.filter(n => !existingNames.has(n));
+
+      const result = document.getElementById('dup-check-result');
+      if (!result) return;
+
+      result.innerHTML = `
+        <div style="margin-bottom:12px;padding:10px 14px;background:var(--surface2);border-radius:10px;font-size:13px;">
+          共 <strong>${names.length}</strong> 筆　
+          已在系統：<span style="color:var(--red);font-weight:700">${dupes.length}</span> 筆　
+          未在系統：<span style="color:#1B5E20;font-weight:700">${newOnes.length}</span> 筆
+        </div>
+        ${newOnes.length === 0 ? '<div style="color:var(--text3);text-align:center;padding:16px;">✅ 所有公司均已在系統中</div>' : `
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;">
+          以下 ${newOnes.length} 家未在系統中，勾選後點「新增勾選項目」匯入：
+          <label style="margin-left:12px;cursor:pointer;font-weight:600">
+            <input type="checkbox" id="dup-check-all" onchange="dupCheckToggleAll(this)" style="accent-color:var(--accent)"> 全選
           </label>
         </div>
-      </div>
-      <div id="cust-import-preview" style="margin-top:4px;"></div>
-    </div>
-  `, () => executeCustImport());
+        <div style="max-height:280px;overflow-y:auto;border:1.5px solid var(--border2);border-radius:10px;">
+          ${newOnes.map((n,i)=>`
+          <label style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--border);cursor:pointer;font-size:14px;" onmouseover="this.style.background='var(--accent-glow)'" onmouseout="this.style.background=''">
+            <input type="checkbox" class="dup-new-cb" value="${n.replace(/"/g,'&quot;')}" style="accent-color:var(--accent);width:15px;height:15px" checked>
+            <span>${n}</span>
+          </label>`).join('')}
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end">
+          <button class="btn btn-primary" onclick="importDupChecked()">✅ 新增勾選項目</button>
+        </div>`}
+        ${dupes.length > 0 ? `
+        <div style="margin-top:12px;font-size:13px;font-weight:700;color:var(--text2);margin-bottom:6px;">已在系統中（${dupes.length} 筆，不重複匯入）：</div>
+        <div style="font-size:12px;color:var(--text3);padding:6px 10px;background:var(--surface2);border-radius:8px;line-height:2">
+          ${dupes.join('　')}
+        </div>` : ''}
+      `;
+    };
+    reader.readAsBinaryString(file);
+  });
+}
+
+function dupCheckToggleAll(cb) {
+  document.querySelectorAll('.dup-new-cb').forEach(el => el.checked = cb.checked);
+}
+
+function importDupChecked() {
+  const checked = [...document.querySelectorAll('.dup-new-cb:checked')].map(el=>el.value);
+  if (!checked.length) { toast('⚠ 請至少勾選一家公司'); return; }
+  let added = 0;
+  checked.forEach(name => {
+    const newCust = {
+      id: DB.nextCustId++,
+      company: name,
+      phone:'', address:'', taxid:'',
+      industry:'', industryDetail:'',
+      level:'L1', owner:'', source:'陌生開發', sourceNote:'',
+      si:'', pcscale:'', notes:'',
+      listed: false, blocked: false,
+      contacts:[{name:'尚無',dept:'',ext:'',mail:'',job:'',primary:true}],
+      logs:[], nextLogId:1
+    };
+    DB.customers.push(newCust);
+    added++;
+  });
+  const saves = DB.customers.filter(c=>checked.includes(c.company)).map(c=>sbSaveCust(c));
+  showLoadingOverlay('匯入中…');
+  Promise.all(saves)
+    .then(()=>{ hideLoadingOverlay(); saveLocalCache(); toast(`✅ 已新增 ${added} 筆客戶`); closeModal('custImportModal'); refreshCustList(); })
+    .catch(e=>{ hideLoadingOverlay(); toast((e.message?.includes('本機')||e.message?.includes('網路'))?'⚠ '+e.message:'❌ 匯入失敗：'+e.message); });
 }
 
 function downloadCustTemplate() {
@@ -6140,6 +6269,7 @@ function onCustExcelUpload(input) {
 }
 
 function executeCustImport() {
+  if (window._custImportMode === 'check') { importDupChecked(); return false; }
   const list = window._pendingCustImport || [];
   if (!list.length) { toast('⚠ 請先上傳 Excel 檔案'); return false; }
   let added = 0, skipped = 0;
