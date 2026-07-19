@@ -248,7 +248,7 @@ table { width: 100%; border-collapse: collapse; }
 th {
   text-align: left;
   padding: 11px 16px;
-  font-size: 11px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--text3);
@@ -258,7 +258,7 @@ th {
 }
 td {
   padding: 13px 16px;
-  font-size: 13px;
+  font-size: 16px;
   border-bottom: 1px solid var(--border);
   vertical-align: top;
   color: var(--text);
@@ -2853,16 +2853,16 @@ function renderCustList() {
             <td>${hasContact
               ? primaryList.map(ct=>`<div style="max-width:5em;word-break:break-all;line-height:1.6;padding:1px 0">${ct.name}</div>`).join('')
               : '<span style="color:var(--text3);font-size:11px;">尚無</span>'}</td>
-            <td style="font-size:12px;color:var(--text2);white-space:nowrap">${hasContact
+            <td style="font-size:14px;color:var(--text2);white-space:nowrap">${hasContact
               ? primaryList.map((ct,ci)=>`<div style="line-height:1.6;padding:1px 0">${ci===0?(c.phone||ct.phone||'<span style=\'color:var(--text3)\'>-</span>'):''}&nbsp;</div>`).join('')
               : (c.phone||'<span style="color:var(--text3)">-</span>')}</td>
-            <td style="font-size:12px;color:var(--text2);white-space:nowrap">${hasContact
+            <td style="font-size:14px;color:var(--text2);white-space:nowrap">${hasContact
               ? primaryList.map(ct=>`<div style="line-height:1.6;padding:1px 0">${ct.ext?'#'+ct.ext:'<span style="color:var(--text3)">-</span>'}</div>`).join('')
               : '<span style="color:var(--text3)">-</span>'}</td>
-            <td>${c.logs.length > 0 ? `<span class="log-count-badge">${c.logs.length}</span>` : '<span style="color:var(--text3);font-size:12px">-</span>'}</td>
+            <td>${c.logs.length > 0 ? `<span class="log-count-badge">${c.logs.length}</span>` : '<span style="color:var(--text3);font-size:14px">-</span>'}</td>
             <td><span class="badge badge-${c.level.toLowerCase()}" style="letter-spacing:0.03em">${c.level}</span></td>
-            <td><span style="font-size:12px">${industryLabel[c.industry]||'-'}</span></td>
-            <td style="font-size:12px;color:var(--text2)">${getRegion(c)||'<span style=\"color:var(--text3)\">-</span>'}</td>
+            <td><span style="font-size:14px">${industryLabel[c.industry]||'-'}</span></td>
+            <td style="font-size:14px;color:var(--text2)">${getRegion(c)||'<span style=\"color:var(--text3)\">-</span>'}</td>
           </tr>`;
         }).join('')}
       </tbody>
@@ -4014,7 +4014,7 @@ function renderPartList() {
             const showCat = p.category !== lastCat;
             lastCat = p.category;
             const catCell = showCat
-              ? `<span ${_C}="tag" style="font-size:11px">${p.category||'-'}</span>`
+              ? `<span ${_C}="tag" style="font-size:14px">${p.category||'-'}</span>`
               : '';
             const borderStyle = showCat ? 'border-top:2px solid var(--border2)' : '';
             return `
@@ -4022,14 +4022,14 @@ function renderPartList() {
               <td>${catCell}</td>
               <td>
                 <strong>${p.company||p.companyEn||'-'}</strong>
-                ${p.companyEn && p.company ? `<span style="font-size:11px;color:var(--text3);margin-left:4px;">${p.companyEn}</span>` : ''}
+                ${p.companyEn && p.company ? `<span style="font-size:13px;color:var(--text3);margin-left:4px;">${p.companyEn}</span>` : ''}
               </td>
               <td>
                 ${(p.contacts||[]).filter(ct=>ct.name&&ct.name!=='尚無').map(ct=>
                   `<div style="font-size:12px;">${ct.primary?'<span style="color:var(--accent);font-size:10px;margin-right:3px;">★</span>':''}${ct.name}${ct.dept?'<span style="color:var(--text3);font-size:11px;margin-left:4px;">'+ct.dept+'</span>':''}</div>`
                 ).join('') || '<span style="color:var(--text3);font-size:11px;">尚無</span>'}
               </td>
-              <td style="line-height:1.8">${brands.length ? brands.map(b=>`<span ${_C}="tag" style="font-size:11px">${b}</span>`).join(' ') : '<span style="color:var(--text3);font-size:12px">-</span>'}</td>
+              <td style="line-height:1.8">${brands.length ? brands.map(b=>`<span ${_C}="tag" style="font-size:14px">${b}</span>`).join(' ') : '<span style="color:var(--text3);font-size:14px">-</span>'}</td>
             </tr>`;
           }).join('');
         })()}
@@ -4928,10 +4928,10 @@ function renderVendorList() {
             const showCatLabel = row.cat !== lastCat;
             lastCat = row.cat;
             const catCell = showCatLabel
-              ? `<span ${_C}="tag" style="font-size:11px;background:var(--surface2)">${row.icon} ${row.catLabel}</span>`
+              ? `<span ${_C}="tag" style="font-size:13px;background:var(--surface2)">${row.icon} ${row.catLabel}</span>`
               : `<span style="color:var(--text3);font-size:11px;">　</span>`;
             const subsHtml = row.subs.length
-              ? row.subs.map(s=>`<span ${_C}="tag" style="font-size:11px">${s}</span>`).join(' ')
+              ? row.subs.map(s=>`<span ${_C}="tag" style="font-size:13px">${s}</span>`).join(' ')
               : '<span style="color:var(--text3);font-size:12px">-</span>';
             const borderStyle = showCatLabel && lastCat !== null ? 'border-top:2px solid var(--border2)' : '';
             return `
@@ -4940,8 +4940,8 @@ function renderVendorList() {
               <td>
                 <div style="display:flex;align-items:center;gap:8px;">
                   <strong>${v.nameZh||v.nameEn||'-'}</strong>
-                  ${v.nameEn && v.nameZh ? `<span style="font-size:11px;color:var(--text3)">${v.nameEn}</span>` : ''}
-                  ${v.country ? `<span ${_C}="tag" style="font-size:10px">${v.country}</span>` : ''}
+                  ${v.nameEn && v.nameZh ? `<span style="font-size:13px;color:var(--text3)">${v.nameEn}</span>` : ''}
+                  ${v.country ? `<span ${_C}="tag" style="font-size:12px">${v.country}</span>` : ''}
                 </div>
               </td>
               <td>${subsHtml}</td>
@@ -6684,14 +6684,14 @@ function renderSchCal() {
       const refName = ev.type==='外部開會' ? schRefLabel(ev.ref||'') : '';
       const intSub  = ev.type==='內部開會' && ev.internalSub ? ev.internalSub : '';
       const detail  = [refName||intSub, ev.label].filter(Boolean).join(' ');
-      const badge   = `<span style="display:inline-block;${typeColor};border-radius:50px;font-size:10px;font-weight:700;padding:1px 7px;margin-right:4px;white-space:nowrap">${typeLabel}</span>${ev.period?`<span style="color:var(--text3);font-size:11px;margin-right:3px">${ev.period}</span>`:''}`;
+      const badge   = `<span style="display:inline-block;${typeColor};border-radius:50px;font-size:13px;font-weight:700;padding:2px 8px;margin-right:4px;white-space:nowrap">${typeLabel}</span>${ev.period?`<span style="color:var(--text3);font-size:11px;margin-right:3px">${ev.period}</span>`:''}`;
       return `<div draggable="true" data-evid="${ev.id}"
         ondragstart="schRowDragStart(event,${ev.id})"
         ondragend="schRowDragEnd(event)"
         style="display:flex;align-items:flex-start;gap:4px;padding:2px 0;font-size:12px;line-height:1.5;cursor:grab;user-select:none">
-        <span style="color:#bbb;font-size:10px;margin-top:3px;flex-shrink:0">⋮⋮</span>
+        <span style="color:#bbb;font-size:12px;margin-top:3px;flex-shrink:0">⋮⋮</span>
         <input type="checkbox" ${ev.done?'checked':''} style="margin-top:3px;accent-color:var(--accent);flex-shrink:0" onclick="schToggleDone(${ev.id},event)">
-        <span onclick="schOpenForm('${dateStr}',${ev.id});event.stopPropagation()" style="cursor:pointer;flex:1">${badge}${detail}</span>
+        <span onclick="schOpenForm('${dateStr}',${ev.id});event.stopPropagation()" style="cursor:pointer;flex:1;font-size:14px">${badge}${detail}</span>
         <button onclick="schDelete(${ev.id},event)" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:10px;padding:0 2px;opacity:0.5;flex-shrink:0">✕</button>
       </div>`;
     };
@@ -6719,7 +6719,7 @@ function renderSchCal() {
       <td style="padding:3px 6px;vertical-align:top">
         <textarea
           class="sch-note-ta"
-          style="width:100%;min-height:28px;height:28px;resize:none;border:1px solid var(--border);border-radius:6px;font-size:11px;padding:4px 6px;background:var(--surface);font-family:inherit;color:var(--text2);line-height:1.4;box-sizing:border-box;overflow:hidden"
+          style="width:100%;min-height:28px;height:28px;resize:none;border:1px solid var(--border);border-radius:6px;font-size:13px;padding:4px 6px;background:var(--surface);font-family:inherit;color:var(--text2);line-height:1.4;box-sizing:border-box;overflow:hidden"
           placeholder="備註…"
           oninput="this.style.height='28px';this.style.height=this.scrollHeight+'px';schSaveDayNote('${dateStr}',this.value)"
         >${SCH.notes?.[dateStr]||''}</textarea>
